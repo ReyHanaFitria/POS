@@ -1,49 +1,90 @@
-<?php 
-// mengaktifkan session pada php
-session_start();
- 
-// menghubungkan php dengan koneksi database
-include 'koneksi.php';
- 
-// menangkap data yang dikirim dari form login
-$username = $_POST['username'];
-$password = md5($_POST['password']);
- 
- 
-// menyeleksi data user dengan username dan password yang sesuai
-$login = mysqli_query($koneksi,"select * from petugas where username='$username' and password='$password'");
-// menghitung jumlah data yang ditemukan
-$cek = mysqli_num_rows($login);
- 
-// cek apakah username dan password di temukan pada database
-if($cek > 0){
- 
-	$data = mysqli_fetch_assoc($login);
- 
-	// cek jika user login sebagai admin
-	if($data['level']=="1"){
- 
-		// buat session login dan username
-		$_SESSION['username'] = $username;
-		$_SESSION['level'] = "1";
-		// alihkan ke halaman dashboard admin
-		header("location:administrator/index.php");
- 
-	// cek jika user login sebagai pegawai
-	}else if($data['level']=="2"){
-		// buat session login dan username
-		$_SESSION['username'] = $username;
-		$_SESSION['level'] = "2";
-		// alihkan ke halaman dashboard pegawai
-		header("location:petugas/index.php");
- 
-	}else{
- 
-		// alihkan ke halaman login kembali
-		header("location:index.php?pesan=gagal");
-	}	
-}else{
-	header("location:index.php?pesan=gagal");
+<?php
+// Mendefinisikan kelas User
+class User
+{
+    // Properti private untuk menyimpan username, password, dan level pengguna
+    private $username;
+    private $password;
+    private $level;
+
+    // Konstruktor untuk menginisialisasi objek User dengan username dan password
+    public function __construct($username, $password)
+    {
+        $this->username = $username;
+        // Menggunakan md5 untuk mengenkripsi password
+        $this->password = md5($password);
+    }
+
+    // Metode untuk mengautentikasi pengguna dengan memeriksa username dan password di database
+    public function authenticate($koneksi)
+    {
+        // Menyiapkan query untuk memilih data pengguna dari tabel petugas
+        $query = "SELECT * FROM petugas WHERE username='$this->username' AND password='$this->password'";
+        // Menjalankan query
+        $result = mysqli_query($koneksi, $query);
+        // Mengambil hasil query sebagai array asosiatif
+        $data = mysqli_fetch_assoc($result);
+
+        // Jika data ditemukan, set level dan kembalikan true
+        if ($data) {
+            $this->level = $data['level'];
+            return true;
+        } else {
+            // Jika tidak ditemukan, kembalikan false
+            return false;
+        }
+    }
+
+    // Metode untuk memeriksa apakah pengguna adalah admin
+    public function isAdmin()
+    {
+        return $this->level == "1"; // Mengembalikan true jika level adalah 1
+    }
+
+    // Metode untuk memeriksa apakah pengguna adalah pegawai
+    public function isPegawai()
+    {
+        return $this->level == "2"; // Mengembalikan true jika level adalah 2
+    }
+
+    // Metode getter untuk mengakses username
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    // Metode getter untuk mengakses level
+    public function getLevel()
+    {
+        return $this->level;
+    }
 }
- 
+
+// Membuat objek User baru dengan username dan password yang diterima dari form
+$user = new User($_POST['username'], $_POST['password']);
+
+// Menghubungkan ke database
+include 'koneksi.php';
+
+// Mengautentikasi pengguna
+if ($user->authenticate($koneksi)) {
+    // Memulai session
+    session_start();
+
+    // Mengatur variabel session menggunakan metode getter
+    $_SESSION['username'] = $user->getUsername();
+    $_SESSION['level'] = $user->getLevel();
+
+    // Mengalihkan pengguna ke dashboard yang sesuai berdasarkan level
+    if ($user->isAdmin()) {
+        header("location:administrator/index.php"); // Menuju dashboard admin
+    } elseif ($user->isPegawai()) {
+        header("location:petugas/index.php"); // Menuju dashboard pegawai
+    } else {
+        header("location:index.php?pesan=gagal"); // Jika tidak ada level yang sesuai
+    }
+} else {
+    // Jika autentikasi gagal, mengalihkan kembali ke halaman login dengan pesan gagal
+    header("location:index.php?pesan=gagal");
+}
 ?>
