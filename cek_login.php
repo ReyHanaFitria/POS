@@ -1,6 +1,6 @@
 <?php
 // Mendefinisikan kelas User
-class User
+class Login
 {
     // Properti private untuk menyimpan username, password, dan level pengguna
     private $username;
@@ -61,7 +61,7 @@ class User
 }
 
 // Membuat objek User baru dengan username dan password yang diterima dari form
-$user = new User($_POST['username'], $_POST['password']);
+$user = new Login($_POST['username'], $_POST['password']);
 
 // Menghubungkan ke database
 include 'koneksi.php';
