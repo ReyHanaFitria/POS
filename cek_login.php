@@ -66,7 +66,7 @@ class Login
 $user = new Login($_POST['username'], $_POST['password']);
 
 // Menghubungkan ke database
-$login = mysqli_connect("localhost", "root", "", "kasir1");
+$login = mysqli_connect("localhost", "root", "", "pos");
 
 if (mysqli_connect_errno()) {
     echo "Koneksi database gagal : " . mysqli_connect_error();

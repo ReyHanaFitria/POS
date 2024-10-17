@@ -2,7 +2,7 @@
 $host = "localhost";
 $user = "root";
 $pass = "";
-$db_name = "kasir1";
+$db_name = "pos";
 
 // Koneksi ke database
 $mysqli = new mysqli($host, $user, $pass, $db_name);
@@ -11,5 +11,3 @@ $mysqli = new mysqli($host, $user, $pass, $db_name);
 if ($mysqli->connect_error) {
 	die("Koneksi gagal: " . $mysqli->connect_error);
 }
-
-$login = mysqli_connect("localhost", "root", "", "kasir1");
