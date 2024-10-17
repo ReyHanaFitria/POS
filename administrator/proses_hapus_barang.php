@@ -1,15 +1,22 @@
-<?php 
-// koneksi database
+<?php
 include '../koneksi.php';
- 
-// menangkap data id yang di kirim dari url
-$ProdukID = $_POST['ProdukID'];
- 
- 
-// menghapus data dari database
-mysqli_query($koneksi,"delete from produk where ProdukID='$ProdukID'");
- 
-// mengalihkan halaman kembali ke data_barang.php
-header("location:data_barang.php?pesan=hapus");
- 
-?>
+
+// Menangkap data id yang dikirim dari form
+$id_produk = $_POST['id_produk']; // Pastikan nama input di form sesuai
+
+// Menghapus data dari database
+$query = "DELETE FROM produk WHERE id_produk='$id_produk'";
+$result = $mysqli->query($query);
+
+// Cek apakah query berhasil
+if ($result) {
+    // Mengalihkan halaman kembali ke data_barang.php dengan pesan sukses
+    header("Location: data_barang.php?pesan=hapus");
+    exit(); // Pastikan untuk menghentikan script setelah redirect
+} else {
+    // Jika gagal, tampilkan pesan error
+    echo "Error: " . $mysqli->error;
+}
+
+// Menutup koneksi
+$mysqli->close();

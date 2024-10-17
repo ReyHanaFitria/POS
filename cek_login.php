@@ -1,4 +1,6 @@
 <?php
+
+
 // Mendefinisikan kelas User
 class User
 {
@@ -10,18 +12,18 @@ class User
     // Konstruktor untuk menginisialisasi objek User dengan username dan password
     public function __construct($username, $password)
     {
-        $this->username = $username;
+        $this->username = htmlspecialchars($username);
         // Menggunakan md5 untuk mengenkripsi password
-        $this->password = md5($password);
+        $this->password = htmlspecialchars(md5($password));
     }
 
     // Metode untuk mengautentikasi pengguna dengan memeriksa username dan password di database
-    public function authenticate($koneksi)
+    public function authenticate($login)
     {
         // Menyiapkan query untuk memilih data pengguna dari tabel petugas
         $query = "SELECT * FROM petugas WHERE username='$this->username' AND password='$this->password'";
         // Menjalankan query
-        $result = mysqli_query($koneksi, $query);
+        $result = mysqli_query($login, $query);
         // Mengambil hasil query sebagai array asosiatif
         $data = mysqli_fetch_assoc($result);
 
@@ -64,10 +66,14 @@ class User
 $user = new User($_POST['username'], $_POST['password']);
 
 // Menghubungkan ke database
-include 'koneksi.php';
+$login = mysqli_connect("localhost", "root", "", "kasir1");
+
+if (mysqli_connect_errno()) {
+    echo "Koneksi database gagal : " . mysqli_connect_error();
+}
 
 // Mengautentikasi pengguna
-if ($user->authenticate($koneksi)) {
+if ($user->authenticate($login)) {
     // Memulai session
     session_start();
 
@@ -87,4 +93,3 @@ if ($user->authenticate($koneksi)) {
     // Jika autentikasi gagal, mengalihkan kembali ke halaman login dengan pesan gagal
     header("location:index.php?pesan=gagal");
 }
-?>

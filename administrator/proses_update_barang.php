@@ -1,17 +1,23 @@
-<?php 
-// koneksi database
+<?php
+// Koneksi database
 include '../koneksi.php';
- 
-// menangkap data yang di kirim dari form
-$ProdukID = $_POST['ProdukID'];
-$NamaProduk = $_POST['NamaProduk'];
-$Harga = $_POST['Harga'];
-$Stok = $_POST['Stok'];
- 
-// update data ke database
-mysqli_query($koneksi,"update produk set NamaProduk='$NamaProduk', Harga='$Harga', Stok='$Stok' where ProdukID='$ProdukID'");
- 
-// mengalihkan halaman kembali ke data_barang.php
-header("location:data_barang.php?pesan=update");
- 
-?>
+
+// Menangkap data yang dikirim dari form
+$produkID = $_POST['id_produk']; // Pastikan nama input di form sesuai
+$namaProduk = $_POST['nama_produk'];
+$harga = $_POST['harga'];
+$stok = $_POST['stok'];
+
+// Update data ke database
+$query = "UPDATE produk SET nama_produk='$namaProduk', harga='$harga', stok='$stok' WHERE id_produk='$produkID'";
+$result = mysqli_query($mysqli, $query);
+
+// Cek apakah query berhasil
+if ($result) {
+    // Mengalihkan halaman kembali ke data_barang.php dengan pesan sukses
+    header("Location: data_barang.php?pesan=update");
+    exit(); // Pastikan untuk menghentikan script setelah redirect
+} else {
+    // Jika gagal, tampilkan pesan error
+    echo "Error: " . mysqli_error($mysqli);
+}
