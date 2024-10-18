@@ -17,7 +17,7 @@ if (isset($_GET['id'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_petugas = $_POST['nama_petugas'];
     $username = $_POST['username'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash the password
+    $password = md5($_POST['password']); // Hash the password
     $level = $_POST['level'];
 
     // Update user in the database

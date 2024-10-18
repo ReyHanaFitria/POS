@@ -16,7 +16,11 @@ $result_pelanggan = $mysqli->query("SELECT PelangganID, NamaPelanggan FROM pelan
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tanggal = $_POST['tanggal'];
     $total_harga = $_POST['total_harga'];
-    $id_customer = $_POST['id_customer'] ?? null; // Jika customer belum dipilih, maka id_customer nya NULL
+    if (isset($_POST['id_customer'])) {
+        $id_customer = $_POST['id_customer'];
+    } else {
+        $id_customer = null; // Jika customer belum dipilih, maka id_customer nya NULL
+    }
     $id_transaksi = $transaksi->tambahTransaksi($tanggal, $total_harga, $id_customer);
 
     // Loop untuk menambah detail transaksi
@@ -55,10 +59,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Tambah Transaksi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            /* Latar belakang terang */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Font modern */
+        }
+
+        .container {
+            max-width: 900px !important;
+            /* Lebar maksimum kontainer */
+            margin-top: 50px;
+            /* Jarak atas kontainer */
+            background-color: white;
+            /* Latar belakang putih */
+            border-radius: 0.5rem;
+            /* Sudut membulat */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Bayangan */
+            padding: 30px;
+            /* Padding di dalam kontainer */
+        }
+
+        h2 {
+            text-align: center;
+            /* Pusatkan judul */
+            color: #343a40;
+            /* Warna judul */
+            margin-bottom: 30px;
+            /* Jarak bawah judul */
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            /* Warna tombol simpan */
+            border-color: #007bff;
+            /* Warna border tombol */
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            /* Warna saat hover */
+            border-color: #004085;
+            /* Warna border saat hover */
+        }
+
+        .alert {
+            margin-top: 20px;
+            /* Jarak atas alert */
+        }
+
+        .detail-item {
+            border: 1px solid #dee2e6;
+            /* Border detail item */
+            border-radius: 0.5rem;
+            /* Sudut membulat */
+            padding: 15px;
+            /* Padding di dalam detail item */
+            background-color: #f1f1f1;
+            /* Latar belakang detail item */
+            margin-bottom: 15px;
+            /* Jarak bawah detail item */
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="container" sty>
         <h2>Tambah Transaksi</h2>
         <?php if (isset($_GET['pesan'])): ?>
             <div class="alert alert-danger" role="alert">
@@ -91,12 +159,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div id="detail-container">
                 <h4>Detail Transaksi</h4>
-                <div class="detail-item mb-3">
+                <div class="detail-item">
                     <select name="produk[0][id_produk]" class="form-control select-produk mb-2" required onchange="setHarga(this, 0)">
                         <option value="" disabled selected>Pilih Produk</option>
                         <?php while ($row = $result_produk->fetch_assoc()): ?>
                             <option value="<?= $row['id_produk'] ?>" data-harga="<?= $row['harga'] ?>" data-stok="<?= $row['stok'] ?>">
                                 <?= ucwords($row['nama_produk']) ?> (Stok: <?= $row['stok'] ?>)
+
                             </option>
                         <?php endwhile; ?>
                     </select>
@@ -131,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         function tambahDetail() {
             const container = document.getElementById('detail-container');
             const newItem = document.createElement('div');
-            newItem.classList.add('detail-item', 'mb-3');
+            newItem.classList.add('detail-item');
             newItem.innerHTML = `
                 <select name="produk[${detailIndex}][id_produk]" class="form-control select-produk mb-2" required onchange="setHarga(this, ${detailIndex})">
                     <option value="" disabled selected>Pilih Produk</option>
