@@ -30,23 +30,41 @@ class Transaksi
     // Fungsi untuk mengurangi stok produk
     public function kurangiStok($id_produk, $jumlah)
     {
-        // Kurangi stok hanya jika stok mencukupi
-        $stmt = $this->db->prepare("
-            UPDATE produk 
-            SET stok = stok - ? 
-            WHERE id_produk = ? AND stok >= ?
-        ");
+        // Ambil nama produk berdasarkan id_produk
+        $stmt = $this->db->prepare("SELECT nama_produk FROM produk WHERE id_produk = ?");
         if (!$stmt) {
             throw new Exception("Gagal menyiapkan statement: " . $this->db->error);
         }
 
         // Bind parameter dan eksekusi
-        $stmt->bind_param("iii", $jumlah, $id_produk, $jumlah);
+        $stmt->bind_param("i", $id_produk);
+        $stmt->execute();
+        $stmt->bind_result($nama_produk);
+        $stmt->fetch();
+        $stmt->close();
+
+        // Kurangi stok hanya jika stok mencukupi
+        $stmt = $this->db->prepare("
+        UPDATE produk 
+        SET stok = stok - ? 
+        WHERE id_produk = ? AND stok >= ?
+    ");
+        if (!$stmt) {
+            throw new Exception("Gagal menyiapkan statement: " . $this->db->error);
+        }
+
+        // Bind parameter dan eksekusi
+        $stmt->bind_param(
+            "iii",
+            $jumlah,
+            $id_produk,
+            $jumlah
+        );
         $stmt->execute();
 
         // Cek apakah ada baris yang diubah (stok cukup)
         if ($stmt->affected_rows === 0) {
-            throw new Exception("Stok produk ID: $id_produk tidak mencukupi atau produk tidak ditemukan!");
+            throw new Exception("Stok produk: " . ucwords($nama_produk) . " tidak mencukupi!"); // Menggunakan nama produk
         }
 
         $stmt->close();

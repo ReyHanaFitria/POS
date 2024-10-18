@@ -16,11 +16,7 @@ $result_pelanggan = $mysqli->query("SELECT PelangganID, NamaPelanggan FROM pelan
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tanggal = $_POST['tanggal'];
     $total_harga = $_POST['total_harga'];
-    if (isset($_POST['id_customer'])) {
-        $id_customer = $_POST['id_customer'];
-    } else {
-        $id_customer = null; // Jika customer belum dipilih, maka id_customer nya NULL
-    }
+    $id_customer = $_POST['id_customer'] ?? null; // Jika customer belum dipilih, maka id_customer nya NULL
     $id_transaksi = $transaksi->tambahTransaksi($tanggal, $total_harga, $id_customer);
 
     // Loop untuk menambah detail transaksi
@@ -36,7 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $transaksi->kurangiStok($id_produk, $jumlah);
         } catch (Exception $e) {
-            echo "Gagal mengurangi stok: " . $e->getMessage();
+            // Alihkan kembali dengan pesan kesalahan
+            header("location:tambah_transaksi.php?pesan=gagal&error=" . urlencode($e->getMessage()));
             exit; // Hentikan eksekusi jika terjadi kesalahan
         }
     }
@@ -63,6 +60,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container mt-5">
         <h2>Tambah Transaksi</h2>
+        <?php if (isset($_GET['pesan'])): ?>
+            <div class="alert alert-danger" role="alert">
+                <?php
+                if ($_GET['pesan'] == "gagal") {
+                    echo htmlspecialchars($_GET['error']);
+                }
+                ?>
+            </div>
+        <?php endif; ?>
         <form method="POST" action="tambah_transaksi.php">
             <div class="mb-3">
                 <label for="tanggal" class="form-label">Tanggal</label>
@@ -89,13 +95,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <select name="produk[0][id_produk]" class="form-control select-produk mb-2" required onchange="setHarga(this, 0)">
                         <option value="" disabled selected>Pilih Produk</option>
                         <?php while ($row = $result_produk->fetch_assoc()): ?>
-                            <option value="<?= $row['id_produk'] ?>" data-harga="<?= $row['harga'] ?>">
-                                <?= $row['nama_produk'] ?>
+                            <option value="<?= $row['id_produk'] ?>" data-harga="<?= $row['harga'] ?>" data-stok="<?= $row['stok'] ?>">
+                                <?= ucwords($row['nama_produk']) ?> (Stok: <?= $row['stok'] ?>)
                             </option>
                         <?php endwhile; ?>
                     </select>
                     <input type="number" name="produk[0][jumlah]" class="form-control my-3" placeholder="Jumlah" required oninput="hitungSubtotal(0)">
                     <input type="number" name="produk[0][harga]" class="form-control mb-2 harga-produk" placeholder="Harga" readonly>
+                    <!-- <input type="number" name="produk[0][stok]" class="form-control mb-2 stok-produk" value="<?= $row['stok'] ?>" readonly> -->
                 </div>
             </div>
             <button type="button" class="btn btn-outline-secondary" onclick="tambahDetail()">Tambah Produk</button>
@@ -129,15 +136,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <select name="produk[${detailIndex}][id_produk]" class="form-control select-produk mb-2" required onchange="setHarga(this, ${detailIndex})">
                     <option value="" disabled selected>Pilih Produk</option>
                     <?php
-                    $result_produk = $mysqli->query("SELECT id_produk, nama_produk, harga FROM produk");
+                    $result_produk = $mysqli->query("SELECT id_produk, nama_produk, harga, stok FROM produk");
                     while ($row = $result_produk->fetch_assoc()): ?>
-                        <option value="<?= $row['id_produk'] ?>" data-harga="<?= $row['harga'] ?>">
-                            <?= $row['nama_produk'] ?>
+                        <option value="<?= $row['id_produk'] ?>" data-harga="<?= $row['harga'] ?>" data-stok="<?= $row['stok'] ?>">
+                            <?= $row['nama_produk'] ?> (Stok: <?= $row['stok'] ?>)
                         </option>
                     <?php endwhile; ?>
                 </select>
                 <input type="number" name="produk[${detailIndex}][jumlah]" class="form-control my-3" placeholder="Jumlah" required oninput="hitungSubtotal(${detailIndex})">
                 <input type="number" name="produk[${detailIndex}][harga]" class="form-control mb-2 harga-produk" placeholder="Harga" readonly>
+                <input type="number" name="produk[${detailIndex}][stok]" class="form-control mb-2 stok-produk" value="<?= $row['stok'] ?>" readonly>
             `;
             container.appendChild(newItem);
             $('.select-produk').select2(); // Re-inisialisasi Select2
