@@ -35,7 +35,7 @@ $dataTransaksi = $transaksi->getTransaksi();
                 <?php foreach ($dataTransaksi as $transaksi): ?>
                     <tr>
                         <td><?= $transaksi['id_transaksi'] ?></td>
-                        <td><?= $transaksi['tanggal'] ?></td>
+                        <td><?= formatTanggal($transaksi['tanggal']) ?></td>
                         <td><?= number_format($transaksi['total_harga'], 2, ',', '.') ?></td>
                         <td>
                             <a href="detail_transaksi.php?id_transaksi=<?= $transaksi['id_transaksi'] ?>" class="btn btn-info">Detail</a>
