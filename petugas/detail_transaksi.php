@@ -24,7 +24,7 @@ $transaksiDetails = $transaksi->getTransaksiDetails($transaksiId);
 
 <body>
     <div class="container mt-5">
-        <h2>SINOM COFFEE</h2>
+        <h2>Detail Transaksi</h2>
         <table class="table table-bordered">
             <thead>
                 <tr>

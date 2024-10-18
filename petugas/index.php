@@ -39,36 +39,30 @@ body {
 
 <div class="container mt-3">
     <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-4">
             <div class="card shadow-sm">
-                <div class="card-body">
+                <div class="card-body text-center">
                     <h5 class="card-title">Data Barang</h5>
                     <a href="data_barang.php" class="btn btn-primary btn-sm">Detail</a>
                 </div>
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-4">
             <div class="card shadow-sm">
-                <div class="card-body">
+                <div class="card-body text-center">
                     <h5 class="card-title">Data Pembelian</h5>
                     <a href="pembelian.php" class="btn btn-primary btn-sm">Detail</a>
                 </div>
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-4">
             <div class="card shadow-sm">
-                <div class="card-body">
+                <div class="card-body text-center">
                     <h5 class="card-title">Stok Barang</h5>
                     <a href="stok_barang.php" class="btn btn-primary btn-sm">Detail</a>
                 </div>
             </div>
         </div>
-        <div class="col-sm-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Data Pengguna</h5>
-                    <a href="data_pengguna.php" class="btn btn-primary btn-sm">Detail</a>
-                </div>
             </div>
         </div>
     </div>

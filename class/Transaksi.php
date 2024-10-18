@@ -10,12 +10,13 @@ class Transaksi
     }
 
     // Fungsi untuk menambah transaksi
-    public function tambahTransaksi($tanggal, $total_harga)
+    public function tambahTransaksi($tanggal, $total_harga, $id_customer = null)
     {
-        $stmt = $this->db->prepare("INSERT INTO transaksi (tanggal, total_harga) VALUES (?, ?)");
-        $stmt->bind_param("si", $tanggal, $total_harga);
+        global $mysqli; // Assuming you have a mysqli connection available
+        $stmt = $mysqli->prepare("INSERT INTO transaksi (tanggal, total_harga, id_customer) VALUES (?, ?, ?)");
+        $stmt->bind_param("sis", $tanggal, $total_harga, $id_customer);
         $stmt->execute();
-        return $this->db->insert_id; // Mengembalikan ID transaksi terakhir
+        return $mysqli->insert_id; // Return the ID of the newly created transaction
     }
 
     // Fungsi untuk menambah detail transaksi
@@ -58,16 +59,15 @@ class Transaksi
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    // Method to get transaction details by ID
-    // Method to get transaction details by ID
     public function getTransaksiDetails($transaksiId)
     {
         // Prepare the SQL statement to prevent SQL injection
         $stmt = $this->db->prepare("
-        SELECT t.*, d.jumlah, d.harga, p.nama_produk 
+        SELECT t.*, d.jumlah, d.harga, p.nama_produk, c.NamaPelanggan AS customer_name
         FROM transaksi t 
         JOIN detail_transaksi d ON t.id_transaksi = d.id_transaksi 
         JOIN produk p ON d.id_produk = p.id_produk 
+        LEFT JOIN pelanggan c ON t.id_customer = c.PelangganID 
         WHERE t.id_transaksi = ?
     ");
         $stmt->bind_param("i", $transaksiId);
@@ -86,6 +86,7 @@ class Transaksi
                 $transaksiDetails['id_transaksi'] = $row['id_transaksi'];
                 $transaksiDetails['tanggal'] = $row['tanggal'];
                 $transaksiDetails['total_harga'] = $row['total_harga'];
+                $transaksiDetails['customer_name'] = $row['customer_name'] ?? "* tidak dicantumkan"; // Set default if NULL
             }
 
             // Add each item to the produk array
@@ -98,5 +99,16 @@ class Transaksi
 
         // Return the complete transaction details
         return $transaksiDetails;
+    }
+
+    public function getCustomerName($pelangganId)
+    {
+        global $mysqli; // Assuming you have a mysqli connection available
+        $stmt = $mysqli->prepare("SELECT NamaPelanggan FROM pelanggan WHERE PelangganID = ?");
+        $stmt->bind_param("i", $pelangganId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $customer = $result->fetch_assoc();
+        return $customer ? $customer['NamaPelanggan'] : null;
     }
 }

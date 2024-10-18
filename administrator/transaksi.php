@@ -75,43 +75,31 @@ $dataTransaksi = $transaksi->getTransaksi();
 </head>
 
 <body>
-    <div class="container">
-        <div class="d-flex justify-content-between">
-            <a href="tambah_transaksi.php" class="btn btn-success my-3">Tambah Transaksi</a>
-        </div>
-
-        <?php if (isset($_GET['pesan'])): ?>
-            <div class="alert alert-success" role="alert">
-                <?= htmlspecialchars($_GET['pesan']) ?>
-            </div>
-        <?php endif; ?>
-
-        <div class="card">
-            <div class="card-body">
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID Transaksi</th>
-                            <th>Tanggal</th>
-                            <th>Total Harga</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($dataTransaksi as $transaksi): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($transaksi['id_transaksi']) ?></td>
-                                <td><?= htmlspecialchars($transaksi['tanggal']) ?></td>
-                                <td>Rp. <?= number_format($transaksi['total_harga'], 2, ',', '.') ?></td>
-                                <td>
-                                    <a href="detail_transaksi.php?id_transaksi=<?= $transaksi['id_transaksi'] ?>" class="btn btn-info">Detail</a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="container mt-5">
+        <h2>Data Transaksi</h2>
+        <a href="tambah_transaksi.php" class="btn btn-success my-3">Tambah Transaksi</a>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID Transaksi</th>
+                    <th>Tanggal</th>
+                    <th>Total Harga</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($dataTransaksi as $transaksi): ?>
+                    <tr>
+                        <td><?= $transaksi['id_transaksi'] ?></td>
+                        <td><?= formatTanggal($transaksi['tanggal']) ?></td>
+                        <td><?= number_format($transaksi['total_harga'], 2, ',', '.') ?></td>
+                        <td>
+                            <a href="detail_transaksi.php?id_transaksi=<?= $transaksi['id_transaksi'] ?>" class="btn btn-info">Detail</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
 
     <?php include "footer.php"; ?>

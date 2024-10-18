@@ -14,9 +14,9 @@ body {
     margin-bottom: 20px; /* Jarak antar kartu */
 }
 
-.card:hover {
+/* .card:hover {
     transform: scale(1.02); /* Sedikit membesar saat hover */
-}
+} */
 
 .table {
     background-color: white; /* Warna latar tabel */
@@ -104,7 +104,7 @@ body {
                 ?>
                     <tr>
                         <td><?= $no++; ?></td>
-                        <td><?= $d['nama_produk']; ?></td>
+                        <td><?= ucwords($d['nama_produk']); ?></td>
                         <td>Rp. <?= number_format($d['harga'], 0, ',', '.'); ?></td>
                         <td><?= $d['stok']; ?></td>
                         <td>

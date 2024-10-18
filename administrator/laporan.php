@@ -74,9 +74,9 @@ $transaksis = $transaksi->getTransaksi();
             <tbody>
                 <?php foreach ($transaksis as $transaksi): ?>
                     <tr>
-                        <td><?= htmlspecialchars($transaksi['id_transaksi']) ?></td>
-                        <td><?= htmlspecialchars($transaksi['tanggal']) ?></td>
-                        <td>Rp. <?= number_format($transaksi['total_harga'], 2, ',', '.') ?></td>
+                        <td><?= $transaksi['id_transaksi'] ?></td>
+                        <td><?= formatTanggal($transaksi['tanggal']) ?></td>
+                        <td><?= number_format($transaksi['total_harga'], 2, ',', '.') ?></td>
                         <td>
                             <a href="#" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#detailModal<?= $transaksi['id_transaksi'] ?>">Lihat Detail</a>
 

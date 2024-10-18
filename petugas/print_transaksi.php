@@ -30,8 +30,8 @@ $transaksiDetails = $transaksi->getTransaksiDetails($transaksiId);
 
 <body>
     <div class="container mt-5">
-        <h2 class="text-center fw-bold">Judul Toko </h2>
-        <p class="text-center">Jl. Raya Timur III No.875, Dawuan, Kec. Dawuan, Kabupaten Majalengka, Jawa Barat 45453</p>
+        <h2 class="text-center fw-bold">SINOM COFFEE</h2>
+        <p class="text-center">Jl. Babakan Anyar No. 32, Babakan Anyar, Kec. Kadipaten, Kab Majalengka, Jawa Barat 083871564273</p>
         <p>Tanggal: <?= formatTanggal($transaksiDetails['tanggal']) ?></p>
         <p>Pelanggan: <?= ucwords($transaksiDetails['customer_name']) ?></p> <!-- Display customer name -->
 
@@ -60,7 +60,7 @@ $transaksiDetails = $transaksi->getTransaksiDetails($transaksiId);
             </tbody>
         </table>
 
-        <p class="text-center mt-5">"Terimakasih Sudah Berbelanja di Toko Kami"</p>
+        <p class="text-center mt-5">Terimakasih Sudah Berbelanja di Sinom Coffee</p>
         <button class="btn btn-primary no-print" onclick="window.print()">Cetak</button>
         <a href=' laporan.php' class="btn btn-primary no-print">Kembali</a>
     </div>

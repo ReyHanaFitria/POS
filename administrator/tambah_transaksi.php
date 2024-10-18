@@ -7,13 +7,21 @@ include "navbar.php";
 $transaksi = new Transaksi($mysqli);
 
 // Ambil data produk dari database
-$result = $mysqli->query("SELECT id_produk, nama_produk, harga, stok FROM produk");
+$result_produk = $mysqli->query("SELECT id_produk, nama_produk, harga, stok FROM produk");
+
+// Ambil data pelanggan dari database
+$result_pelanggan = $mysqli->query("SELECT PelangganID, NamaPelanggan FROM pelanggan");
 
 // Proses jika form disubmit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tanggal = $_POST['tanggal'];
     $total_harga = $_POST['total_harga'];
-    $id_transaksi = $transaksi->tambahTransaksi($tanggal, $total_harga);
+    if (isset($_POST['id_customer'])) {
+        $id_customer = $_POST['id_customer'];
+    } else {
+        $id_customer = null; // Jika customer belum dipilih, maka id_customer nya NULL
+    }
+    $id_transaksi = $transaksi->tambahTransaksi($tanggal, $total_harga, $id_customer);
 
     // Loop untuk menambah detail transaksi
     foreach ($_POST['produk'] as $produk) {
@@ -36,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Setelah transaksi berhasil ditambahkan
     echo "<script>
         alert('Transaksi berhasil ditambahkan!');
-        window.location.href = 'cetak_transaksi.php?id_transaksi=' + $id_transaksi;
+        window.location.href = 'print_transaksi.php?id=' + $id_transaksi;
       </script>";
 }
 
@@ -57,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .container {
-            max-width: 800px; /* Lebar maksimum kontainer */
+            max-width: 900px; /* Lebar maksimum kontainer */
             margin-top: 50px; /* Jarak atas kontainer */
             background-color: white; /* Latar belakang putih */
             border-radius: 0.5rem; /* Sudut membulat */
@@ -104,6 +112,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="date" name="tanggal" class="form-control" required>
             </div>
             <div class="mb-3">
+                <label for="id_customer" class="form-label">Pelanggan (Opsional)</label>
+                <select name="id_customer" class="form-control select-pelanggan">
+                    <option value="" disabled selected>Pilih Pelanggan</option>
+                    <?php while ($row = $result_pelanggan->fetch_assoc()): ?>
+                        <option value="<?= $row['PelangganID'] ?>">
+                            <?= $row['NamaPelanggan'] ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
+            </div>
+            <div class="mb-3">
                 <label for="total_harga" class="form-label">Total Harga</label>
                 <input type="number" name="total_harga" id="total_harga" class="form-control" readonly>
             </div>
@@ -112,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="detail-item">
                     <select name="produk[0][id_produk]" class="form-control select-produk mb-2" required onchange="setHarga(this, 0)">
                         <option value="" disabled selected>Pilih Produk</option>
-                        <?php while ($row = $result->fetch_assoc()): ?>
+                        <?php while ($row = $result_produk->fetch_assoc()): ?>
                             <option value="<?= $row['id_produk'] ?>" data-harga="<?= $row['harga'] ?>">
                                 <?= $row['nama_produk'] ?>
                             </option>
@@ -122,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="number" name="produk[0][harga]" class="form-control mb-2 harga-produk" placeholder="Harga" readonly>
                 </div>
             </div>
-            <button type="button" class="btn btn-outline-secondary" onclick="tambahDetail()">Tambah Detail</button>
+            <button type="button" class="btn btn-outline-secondary" onclick="tambahDetail()">Tambah Produk</button>
             <button type="submit" class="btn btn-primary">Simpan Transaksi</button>
         </form>
     </div>
@@ -138,6 +157,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 placeholder: "Pilih Produk",
                 allowClear: true
             });
+            $('.select-pelanggan').select2({
+                placeholder: "Pilih Pelanggan",
+                allowClear: true
+            });
         });
 
         // Fungsi untuk menambah form detail transaksi
@@ -149,8 +172,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <select name="produk[${detailIndex}][id_produk]" class="form-control select-produk mb-2" required onchange="setHarga(this, ${detailIndex})">
                     <option value="" disabled selected>Pilih Produk</option>
                     <?php
-                    $result = $mysqli->query("SELECT id_produk, nama_produk, harga FROM produk");
-                    while ($row = $result->fetch_assoc()): ?>
+                    $result_produk = $mysqli->query("SELECT id_produk, nama_produk, harga FROM produk");
+                    while ($row = $result_produk->fetch_assoc()): ?>
                         <option value="<?= $row['id_produk'] ?>" data-harga="<?= $row['harga'] ?>">
                             <?= $row['nama_produk'] ?>
                         </option>
