@@ -1,17 +1,27 @@
 <?php
+session_start();
+// Cek apakah pengguna sudah login dan memiliki level yang sesuai
+if (!isset($_SESSION['level']) || $_SESSION['level'] != 1) {
+    // Jika tidak, alihkan ke halaman beranda atau halaman lain
+    header("Location: index.php");
+    exit();
+}
+
 include "header.php";
 include "navbar.php";
 include "../koneksi.php"; // Include database connection
+include "../logic/functions.php"; // Include functions file
 
 if (isset($_GET['id'])) {
     $id_petugas = $_GET['id'];
 
-    // Fetch user data from the database
-    $stmt = $mysqli->prepare("SELECT * FROM petugas WHERE id_petugas = ?");
-    $stmt->bind_param("i", $id_petugas);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
+    try {
+        // Ambil data petugas dari database
+        $user = ambilDataPetugas($mysqli, $id_petugas);
+    } catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+        exit();
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -20,13 +30,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = md5($_POST['password']); // Hash the password
     $level = $_POST['level'];
 
-    // Update user in the database
-    $stmt = $mysqli->prepare("UPDATE petugas SET nama_petugas = ?, username = ?, password = ?, level = ? WHERE id_petugas = ?");
-    $stmt->bind_param("ssssi", $nama_petugas, $username, $password, $level, $id_petugas);
-    $stmt->execute();
-
-    header("Location: user_management.php?pesan=update");
-    exit();
+    try {
+        // Update user in the database
+        updatePetugas($mysqli, $id_petugas, $nama_petugas, $username, $password, $level);
+        header("Location: user_management.php?pesan=update");
+        exit();
+    } catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+        exit();
+    }
 }
 ?>
 
@@ -35,11 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="post" action="">
         <div class="form-group">
             <label>Name</label>
-            <input type="text" class="form-control" name="nama_petugas" value="<?php echo $user['nama_petugas']; ?>" required>
+            <input type="text" class="form-control" name="nama_petugas" value="<?php echo htmlspecialchars($user['nama_petugas']); ?>" required>
         </div>
         <div class="form-group">
             <label>Username</label>
-            <input type="text" class="form-control" name="username" value="<?php echo $user['username']; ?>" required>
+            <input type="text" class="form-control" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
         </div>
         <div class="form-group">
             <label>Password</label>

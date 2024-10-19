@@ -2,10 +2,15 @@
 include "header.php";
 include "navbar.php";
 include "../koneksi.php"; // Include database connection
+include "../logic/functions.php"; // Include functions file
 
-// Fetch customers from the database
-$result = $mysqli->query("SELECT * FROM pelanggan");
-
+try {
+    // Fetch customers from the database
+    $result = ambilDataPelanggan($mysqli);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+    exit();
+}
 ?>
 
 <div class="container mt-4">
@@ -42,18 +47,18 @@ $result = $mysqli->query("SELECT * FROM pelanggan");
             </tr>
         </thead>
         <tbody>
-            <?php while ($row = $result->fetch_assoc()): ?>
+            <?php foreach ($result as $pelanggan): ?>
                 <tr>
-                    <td><?php echo $row['PelangganID']; ?></td>
-                    <td><?php echo $row['NamaPelanggan']; ?></td>
-                    <td><?php echo $row['Alamat']; ?></td>
-                    <td><?php echo $row['NomorTelepon']; ?></td>
+                    <td><?php echo $pelanggan['PelangganID']; ?></td>
+                    <td><?php echo $pelanggan['NamaPelanggan']; ?></td>
+                    <td><?php echo $pelanggan['Alamat']; ?></td>
+                    <td><?php echo $pelanggan['NomorTelepon']; ?></td>
                     <td>
-                        <a href="edit_customer.php?id=<?php echo $row['PelangganID']; ?>" class="btn btn-warning">Edit</a>
-                        <a href="delete_customer.php?id=<?php echo $row['PelangganID']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this customer?');">Delete</a>
+                        <a href="edit_customer.php?id=<?php echo $pelanggan['PelangganID']; ?>" class="btn btn-warning">Edit</a>
+                        <a href="delete_customer.php?id=<?php echo $pelanggan['PelangganID']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this customer?');">Delete</a>
                     </td>
                 </tr>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         </tbody>
     </table>
 </div>

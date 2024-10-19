@@ -2,19 +2,21 @@
 include "header.php";
 include "navbar.php";
 include "../koneksi.php"; // Include database connection
+include "../logic/functions.php"; // Include functions file
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_pelanggan = $_POST['nama_pelanggan'];
     $alamat = $_POST['alamat'];
     $nomor_telepon = $_POST['nomor_telepon'];
 
-    // Insert customer into the database
-    $stmt = $mysqli->prepare("INSERT INTO pelanggan (NamaPelanggan, Alamat, NomorTelepon) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $nama_pelanggan, $alamat, $nomor_telepon);
-    $stmt->execute();
-
-    header("Location: customer_management.php?pesan=simpan");
-    exit();
+    try {
+        // Panggil fungsi untuk menambahkan pelanggan
+        tambahPelanggan($mysqli, $nama_pelanggan, $alamat, $nomor_telepon);
+        header("Location: data_pelanggan.php?pesan=simpan");
+        exit();
+    } catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+    }
 }
 ?>
 
@@ -34,8 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label>Phone Number</label>
             <input type="text" class="form-control" name="nomor_telepon" required>
         </div>
-        <button type="submit" class="btn btn-primary mt-3">Tambah Pelanggan</h2>
-        </button>
+        <button type="submit" class="btn btn-primary mt-3">Tambah Pelanggan</button>
     </form>
 </div>
 
