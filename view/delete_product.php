@@ -1,21 +1,20 @@
 <?php
 include '../koneksi.php';
+include '../logic/functions.php'; // Pastikan untuk menyertakan file functions.php
 
 // Menangkap data id yang dikirim dari form
 $id_produk = $_POST['id_produk']; // Pastikan nama input di form sesuai
 
-// Menghapus data dari database
-$query = "DELETE FROM produk WHERE id_produk='$id_produk'";
-$result = $mysqli->query($query);
+try {
+    // Menghapus data dari database
+    hapusProduk($mysqli, $id_produk);
 
-// Cek apakah query berhasil
-if ($result) {
     // Mengalihkan halaman kembali ke data_barang.php dengan pesan sukses
     header("Location: data_barang.php?pesan=hapus");
     exit(); // Pastikan untuk menghentikan script setelah redirect
-} else {
+} catch (Exception $e) {
     // Jika gagal, tampilkan pesan error
-    echo "Error: " . $mysqli->error;
+    echo "Error: " . $e->getMessage();
 }
 
 // Menutup koneksi

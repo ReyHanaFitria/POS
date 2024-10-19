@@ -17,7 +17,7 @@ $transaksiDetails = $transaksi->getTransaksiDetails($transaksiId);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cetak Transaksi <?= $transaksiId ?></title>
+    <title>Cetak Transaksi ID: <?= $transaksiId ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         @media print {
@@ -59,7 +59,7 @@ $transaksiDetails = $transaksi->getTransaksiDetails($transaksiId);
             </tbody>
         </table>
 
-        <p class="text-center mt-5">Terimakasih Sudah Berbelanja di Sinom Coffee</p>
+        <p class="text-center mt-5">Terimakasih Sudah Berbelanja di Toko Kami</p>
         <button class="btn btn-primary no-print" onclick="window.print()">Cetak</button>
         <a href=' laporan.php' class="btn btn-primary no-print">Kembali</a>
     </div>

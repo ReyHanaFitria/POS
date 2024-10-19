@@ -2,6 +2,14 @@
 include "header.php";
 include "navbar.php";
 include "../koneksi.php"; // Include database connection
+include "../logic/functions.php"; // Include functions file
+
+// Cek apakah pengguna sudah login dan memiliki level yang sesuai
+if (!isset($_SESSION['level']) || $_SESSION['level'] != 1) {
+    // Jika tidak, alihkan ke halaman beranda atau halaman lain
+    header("Location: index.php");
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_petugas = $_POST['nama_petugas'];
@@ -9,13 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = md5($_POST['password']); // Hash the password
     $level = $_POST['level'];
 
-    // Insert user into the database
-    $stmt = $mysqli->prepare("INSERT INTO petugas (nama_petugas, username, password, level) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("sssi", $nama_petugas, $username, $password, $level);
-    $stmt->execute();
-
-    header("Location: user_management.php?pesan=simpan");
-    exit();
+    try {
+        // Panggil fungsi untuk menambahkan pengguna
+        tambahPengguna($mysqli, $nama_petugas, $username, $password, $level);
+        header("Location: user_management.php?pesan=simpan");
+        exit();
+    } catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+    }
 }
 ?>
 

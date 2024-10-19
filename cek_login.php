@@ -83,9 +83,9 @@ if ($user->authenticate($login)) {
 
     // Mengalihkan pengguna ke dashboard yang sesuai berdasarkan level
     if ($user->isAdmin()) {
-        header("location:administrator/index.php"); // Menuju dashboard admin
+        header("location:view/index.php"); // Menuju dashboard admin
     } elseif ($user->isPegawai()) {
-        header("location:petugas/index.php"); // Menuju dashboard pegawai
+        header("location:view/index.php"); // Menuju dashboard pegawai
     } else {
         header("location:index.php?pesan=gagal"); // Jika tidak ada level yang sesuai
     }

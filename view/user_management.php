@@ -1,11 +1,24 @@
 <?php
+// Kode lainnya untuk menampilkan data pengguna
 include "header.php";
 include "navbar.php";
 include "../koneksi.php"; // Include database connection
+include "../logic/functions.php"; // Pastikan untuk menyertakan file functions.php
 
-// Fetch users from the database
-$result = $mysqli->query("SELECT * FROM petugas");
+// Cek apakah pengguna sudah login dan memiliki level yang sesuai
+if (!isset($_SESSION['level']) || $_SESSION['level'] != 1) {
+    // Jika tidak, alihkan ke halaman beranda atau halaman lain
+    header("Location: index.php");
+    exit();
 
+}    
+    // Fetch users from the database
+try {
+    $result = ambilDataPetugas($mysqli);
+} catch (Exception $e) {
+    echo "<div class='alert alert-danger' role='alert'>" . $e->getMessage() . "</div>";
+    exit;
+}
 ?>
 
 <div class="container mt-4">
@@ -42,18 +55,18 @@ $result = $mysqli->query("SELECT * FROM petugas");
             </tr>
         </thead>
         <tbody>
-            <?php while ($row = $result->fetch_assoc()): ?>
+            <?php foreach ($result as $user): ?>
                 <tr>
-                    <td><?php echo $row['id_petugas']; ?></td>
-                    <td><?php echo $row['nama_petugas']; ?></td>
-                    <td><?php echo $row['username']; ?></td>
-                    <td><?php echo $row['level']; ?></td>
+                    <td><?php echo $user['id_petugas']; ?></td>
+                    <td><?php echo $user['nama_petugas']; ?></td>
+                    <td><?php echo $user['username']; ?></td>
+                    <td><?php echo $user['level']; ?></td>
                     <td>
-                        <a href="edit_user.php?id=<?php echo $row['id_petugas']; ?>" class="btn btn-warning">Edit</a>
-                        <a href="delete_user.php?id=<?php echo $row['id_petugas']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                        <a href="edit_user.php?id=<?php echo $user['id_petugas']; ?>" class="btn btn-warning">Edit</a>
+                        <a href="delete_user.php?id=<?php echo $user['id_petugas']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
                     </td>
                 </tr>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         </tbody>
     </table>
 </div>

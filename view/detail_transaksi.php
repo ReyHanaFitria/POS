@@ -1,10 +1,17 @@
 <?php
-include "../koneksi.php";
-include "../class/Transaksi.php";
+include "../koneksi.php"; // Include database connection
+include "../class/Transaksi.php"; // Include Transaksi class
+include "../logic/functions.php"; // Include functions file
 
-$transaksi = new Transaksi($mysqli);
 $transaksiId = $_GET['id_transaksi'];
-$transaksiDetails = $transaksi->getTransaksiDetails($transaksiId);
+
+try {
+    // Ambil detail transaksi
+    $transaksiDetails = ambilDetailTransaksi($mysqli, $transaksiId);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+    exit();
+}
 ?>
 
 <!DOCTYPE html>

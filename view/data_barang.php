@@ -1,57 +1,86 @@
 <?php
 include "header.php";
 include "navbar.php";
+include '../koneksi.php'; // Include database connection
+include "../logic/functions.php"; // Include functions file
+
+try {
+    // Fetch products from the database
+    $data = ambilDataProduk($mysqli);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+    exit();
+}
 ?>
+
 <style>
-body {
-    background-color: #f8f9fa; /* Latar belakang terang */
-    font-family: Arial, sans-serif; /* Font yang lebih modern */
-}
+    body {
+        background-color: #f8f9fa;
+        /* Latar belakang terang */
+        font-family: Arial, sans-serif;
+        /* Font yang lebih modern */
+    }
 
-.card {
-    border-radius: 0.5rem; /* Sudut membulat */
-    transition: transform 0.3s; /* Transisi halus */
-    margin-bottom: 20px; /* Jarak antar kartu */
-}
+    .card {
+        border-radius: 0.5rem;
+        /* Sudut membulat */
+        transition: transform 0.3s;
+        /* Transisi halus */
+        margin-bottom: 20px;
+        /* Jarak antar kartu */
+    }
 
-.table {
-    background-color: white; /* Warna latar tabel */
-    border-radius: 0.5rem; /* Sudut tabel membulat */
-    overflow: hidden; /* Menghindari elemen keluar dari tabel */
-}
+    .table {
+        background-color: white;
+        /* Warna latar tabel */
+        border-radius: 0.5rem;
+        /* Sudut tabel membulat */
+        overflow: hidden;
+        /* Menghindari elemen keluar dari tabel */
+    }
 
-.table th, .table td {
-    vertical-align: middle; /* Penempatan konten di tengah */
-}
+    .table th,
+    .table td {
+        vertical-align: middle;
+        /* Penempatan konten di tengah */
+    }
 
-.btn-primary {
-    background-color: #007bff; /* Warna tombol */
-    border-color: #007bff; /* Warna border tombol */
-}
+    .btn-primary {
+        background-color: #007bff;
+        /* Warna tombol */
+        border-color: #007bff;
+        /* Warna border tombol */
+    }
 
-.btn-primary:hover {
-    background-color: #0056b3; /* Warna latar belakang saat hover */
-}
+    .btn-primary:hover {
+        background-color: #0056b3;
+        /* Warna latar belakang saat hover */
+    }
 
-.btn-info {
-    background-color: #17a2b8; /* Warna tombol edit */
-}
+    .btn-info {
+        background-color: #17a2b8;
+        /* Warna tombol edit */
+    }
 
-.btn-info:hover {
-    background-color: #138496; /* Warna latar belakang saat hover */
-}
+    .btn-info:hover {
+        background-color: #138496;
+        /* Warna latar belakang saat hover */
+    }
 
-.btn-danger {
-    background-color: #dc3545; /* Warna tombol hapus */
-}
+    .btn-danger {
+        background-color: #dc3545;
+        /* Warna tombol hapus */
+    }
 
-.btn-danger:hover {
-    background-color: #c82333; /* Warna latar belakang saat hover */
-}
+    .btn-danger:hover {
+        background-color: #c82333;
+        /* Warna latar belakang saat hover */
+    }
 
-.modal-header {
-    background-color: #f1f1f1; /* Warna latar belakang header modal */
-}
+    .modal-header {
+        background-color: #f1f1f1;
+        /* Warna latar belakang header modal */
+    }
 </style>
 
 <div class="card mt-2">
@@ -60,7 +89,7 @@ body {
             Tambah Data
         </button>
     </div>
-    
+
     <div class="card-body">
         <?php
         if (isset($_GET['pesan'])) {
@@ -93,9 +122,7 @@ body {
             </thead>
             <tbody>
                 <?php
-                include '../koneksi.php';
                 $no = 1;
-                $data = mysqli_query($mysqli, "SELECT * FROM produk order by id_produk desc");
                 while ($d = mysqli_fetch_array($data)) {
                 ?>
                     <tr>
@@ -104,7 +131,7 @@ body {
                         <td>Rp. <?= number_format($d['harga'], 0, ',', '.'); ?></td>
                         <td><?= $d['stok']; ?></td>
                         <td>
-                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#edit-data<?= $d['id_produk']; ?>">Edit</button>
+                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#edit-data<?= $d['id_produk']; ?>">Edit </button>
                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#hapus-data<?= $d['id_produk']; ?>">Hapus</button>
                         </td>
                     </tr>
@@ -193,7 +220,7 @@ body {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keluar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kel uar</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
