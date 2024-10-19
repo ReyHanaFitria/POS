@@ -50,8 +50,8 @@ body {
         <div class="col-sm-3">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">Data Pembelian</h5>
-                    <a href="pembelian.php" class="btn btn-primary btn-sm">Detail</a>
+                    <h5 class="card-title">Laporan</h5>
+                    <a href="laporan.php" class="btn btn-primary btn-sm">Detail</a>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@ body {
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">Stok Barang</h5>
-                    <a href="stok_barang.php" class="btn btn-primary btn-sm">Detail</a>
+                    <a href="data_barang.php" class="btn btn-primary btn-sm">Detail</a>
                 </div>
             </div>
         </div>
@@ -67,7 +67,7 @@ body {
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">Data Pengguna</h5>
-                    <a href="data_pengguna.php" class="btn btn-primary btn-sm">Detail</a>
+                    <a href="user_management.php" class="btn btn-primary btn-sm">Detail</a>
                 </div>
             </div>
         </div>

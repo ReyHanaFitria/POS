@@ -50,8 +50,8 @@ body {
         <div class="col-sm-4">
             <div class="card shadow-sm">
                 <div class="card-body text-center">
-                    <h5 class="card-title">Data Pembelian</h5>
-                    <a href="pembelian.php" class="btn btn-primary btn-sm">Detail</a>
+                    <h5 class="card-title">Laporan</h5>
+                    <a href="laporan.php" class="btn btn-primary btn-sm">Detail</a>
                 </div>
             </div>
         </div>

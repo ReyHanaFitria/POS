@@ -17,7 +17,7 @@ $transaksiDetails = $transaksi->getTransaksiDetails($transaksiId);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cetak Transaksi ID: <?= $transaksiId ?></title>
+    <title>Cetak Transaksi <?= $transaksiId ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         @media print {
@@ -31,16 +31,15 @@ $transaksiDetails = $transaksi->getTransaksiDetails($transaksiId);
 <body>
     <div class="container mt-5">
         <h2 class="text-center fw-bold">SINOM COFFEE</h2>
-        <p class="text-center">Jl. Babakan Anyar No. 32, Babakan Anyar, Kec. Kadipaten, Kab Majalengka, Jawa Barat 083871564273</p>
+        <p class="text-center">Jl. Babakan Anyar No. 32, Babakan Anyar, Kec. Kadipaten, Kab Majalengka, Jawa Barat, No Tlp : 083871564273</p>
         <p>Tanggal: <?= formatTanggal($transaksiDetails['tanggal']) ?></p>
         <p>Pelanggan: <?= ucwords($transaksiDetails['customer_name']) ?></p> <!-- Display customer name -->
 
-        <h4>Detail Produk</h4>
         <table class="table">
             <thead>
                 <tr>
                     <th>Nama Produk</th>
-                    <th>Quantity</th>
+                    <th>Jumlah</th>
                     <th>Harga</th>
                 </tr>
             </thead>

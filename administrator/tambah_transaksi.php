@@ -145,7 +145,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </select>
                     <input type="number" name="produk[0][jumlah]" class="form-control my-3" placeholder="Jumlah" required oninput="hitungSubtotal(0)">
                     <input type="number" name="produk[0][harga]" class="form-control mb-2 harga-produk" placeholder="Harga" readonly>
-                    <!-- <input type="number" name="produk[0][stok]" class="form-control mb-2 stok-produk" value="<?= $row['stok'] ?>" readonly> -->
                 </div>
             </div>
             <button type="button" class="btn btn-outline-secondary" onclick="tambahDetail()">Tambah Produk</button>
@@ -188,7 +187,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </select>
                 <input type="number" name="produk[${detailIndex}][jumlah]" class="form-control my-3" placeholder="Jumlah" required oninput="hitungSubtotal(${detailIndex})">
                 <input type="number" name="produk[${detailIndex}][harga]" class="form-control mb-2 harga-produk" placeholder="Harga" readonly>
-                <input type="number" name="produk[${detailIndex}][stok]" class="form-control mb-2 stok-produk" value="<?= $row['stok'] ?>" readonly>
             `;
             container.appendChild(newItem);
             $('.select-produk').select2(); // Re-inisialisasi Select2

@@ -9,7 +9,7 @@ $result = $mysqli->query("SELECT * FROM pelanggan");
 ?>
 
 <div class="container mt-4">
-    <h2>Data Pelanggan</h2>
+<h2>Data Pelanggan</h2>
     <a href="add_customer.php" class="btn btn-primary mb-3">Tambah Pelanggan</a>
     <?php
     if (isset($_GET['pesan'])) {

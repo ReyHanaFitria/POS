@@ -62,6 +62,7 @@ $transaksis = $transaksi->getTransaksi();
 
 <body>
     <div class="container">
+    <h2>Laporan Transaksi</h2>
         <table class="table table-bordered">
             <thead>
                 <tr>
