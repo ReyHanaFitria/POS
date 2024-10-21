@@ -220,7 +220,7 @@ try {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kel uar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keluar</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
