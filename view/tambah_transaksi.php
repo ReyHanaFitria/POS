@@ -16,8 +16,10 @@ $result_pelanggan = $mysqli->query("SELECT PelangganID, NamaPelanggan FROM pelan
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tanggal = $_POST['tanggal'];
     $total_harga = $_POST['total_harga'];
+    $uang = $_POST['uang'];
+    $kembalian = $_POST['kembalian'];
     $id_customer = $_POST['id_customer'] ?? null; // Jika customer belum dipilih, maka id_customer nya NULL
-    $id_transaksi = $transaksi->tambahTransaksi($tanggal, $total_harga, $id_customer);
+    $id_transaksi = $transaksi->tambahTransaksi($tanggal, $total_harga, $uang, $kembalian, $id_customer);
 
     // Loop untuk menambah detail transaksi
     foreach ($_POST['produk'] as $produk) {
@@ -57,45 +59,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         body {
-            background-color: #f8f9fa; /* Latar belakang terang */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Font modern */
+            background-color: #f8f9fa;
+            /* Latar belakang terang */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Font modern */
         }
 
         .container {
-            max-width: 900px; /* Lebar maksimum kontainer */
-            margin-top: 50px; /* Jarak atas kontainer */
-            background-color: white; /* Latar belakang putih */
-            border-radius: 0.5rem; /* Sudut membulat */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Bayangan */
-            padding: 30px; /* Padding di dalam kontainer */
+            max-width: 900px;
+            /* Lebar maksimum kontainer */
+            margin-top: 50px;
+            /* Jarak atas kontainer */
+            background-color: white;
+            /* Latar belakang putih */
+            border-radius: 0.5rem;
+            /* Sudut membulat */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Bayangan */
+            padding: 30px;
+            /* Padding di dalam kontainer */
         }
 
         h2 {
-            text-align: center; /* Pusatkan judul */
-            color: #343a40; /* Warna judul */
-            margin-bottom: 30px; /* Jarak bawah judul */
+            text-align: center;
+            /* Pusatkan judul */
+            color: #343a40;
+            /* Warna judul */
+            margin-bottom: 30px;
+            /* Jarak bawah judul */
         }
 
         .btn-primary {
-            background-color: #007bff; /* Warna tombol simpan */
-            border-color: #007bff; /* Warna border tombol */
+            background-color: #007bff;
+            /* Warna tombol simpan */
+            border-color: #007bff;
+            /* Warna border tombol */
         }
 
         .btn-primary:hover {
-            background-color: #0056b3; /* Warna saat hover */
-            border-color: #004085; /* Warna border saat hover */
+            background-color: #0056b3;
+            /* Warna saat hover */
+            border-color: #004085;
+            /* Warna border saat hover */
         }
 
         .alert {
-            margin-top: 20px; /* Jarak atas alert */
+            margin-top: 20px;
+            /* Jarak atas alert */
         }
 
         .detail-item {
-            border: 1px solid #dee2e6; /* Border detail item */
-            border-radius: 0.5rem; /* Sudut membulat */
-            padding: 15px; /* Padding di dalam detail item */
-            background-color: #f1f1f1; /* Latar belakang detail item */
-            margin-bottom: 15px; /* Jarak bawah detail item */
+            border: 1px solid #dee2e6;
+            /* Border detail item */
+            border-radius: 0.5rem;
+            /* Sudut membulat */
+            padding: 15px;
+            /* Padding di dalam detail item */
+            background-color: #f1f1f1;
+            /* Latar belakang detail item */
+            margin-bottom: 15px;
+            /* Jarak bawah detail item */
         }
     </style>
 </head>
@@ -146,6 +169,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="number" name="produk[0][jumlah]" class="form-control my-3" placeholder="Jumlah" required oninput="hitungSubtotal(0)">
                     <input type="number" name="produk[0][harga]" class="form-control mb-2 harga-produk" placeholder="Harga" readonly>
                 </div>
+            </div>
+            <div class="mb-3">
+                <label for="uang" class="form-label">Uang Pelanggan</label>
+                <input type="number" name="uang" id="uang" class="form-control" required oninput="hitungKembalian()">
+            </div>
+            <div class="mb-3">
+                <label for="kembalian" class="form-label">Kembalian</label>
+                <input type="number" name="kembalian" id="kembalian" class="form-control" readonly>
             </div>
             <button type="button" class="btn btn-outline-secondary" onclick="tambahDetail()">Tambah Produk</button>
             <button type="submit" class="btn btn-primary">Simpan Transaksi</button>
@@ -213,6 +244,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 total += qty * input.value;
             });
             document.getElementById('total_harga').value = total;
+        }
+
+        function hitungKembalian() {
+            const totalHarga = parseFloat(document.getElementById('total_harga').value) || 0;
+            const uangCustomer = parseFloat(document.getElementById('uang').value) || 0;
+            const kembalian = uangCustomer - totalHarga;
+            document.getElementById('kembalian').value = kembalian >= 0 ? kembalian : 0; // Tidak boleh negatif
         }
     </script>
 </body>
