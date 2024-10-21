@@ -10,11 +10,11 @@ class Transaksi
     }
 
     // Fungsi untuk menambah transaksi
-    public function tambahTransaksi($tanggal, $total_harga, $id_customer = null)
+    public function tambahTransaksi($tanggal, $total_harga, $uang, $kembalian, $id_customer = null)
     {
         global $mysqli; // Assuming you have a mysqli connection available
-        $stmt = $mysqli->prepare("INSERT INTO transaksi (tanggal, total_harga, id_customer) VALUES (?, ?, ?)");
-        $stmt->bind_param("sis", $tanggal, $total_harga, $id_customer);
+        $stmt = $mysqli->prepare("INSERT INTO transaksi (tanggal, total_harga, uang, kembalian, id_customer) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sddsi", $tanggal, $total_harga, $uang, $kembalian, $id_customer);
         $stmt->execute();
         return $mysqli->insert_id; // Return the ID of the newly created transaction
     }
@@ -104,6 +104,8 @@ class Transaksi
                 $transaksiDetails['id_transaksi'] = $row['id_transaksi'];
                 $transaksiDetails['tanggal'] = $row['tanggal'];
                 $transaksiDetails['total_harga'] = $row['total_harga'];
+                $transaksiDetails['uang'] = $row['uang']; // Ambil uang
+                $transaksiDetails['kembalian'] = $row['kembalian']; // Ambil kembalian
                 $transaksiDetails['customer_name'] = $row['customer_name'] ?? "* tidak dicantumkan"; // Set default if NULL
             }
 

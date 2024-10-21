@@ -204,7 +204,7 @@ try {
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Tambah Data</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="proses_simpan_barang.php" method="post">
+            <form action="add_product.php" method="post">
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Nama Produk</label>

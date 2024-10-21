@@ -1,7 +1,7 @@
 <?php
 // Koneksi database
 include '../koneksi.php';
-include 'functions.php'; // Pastikan untuk menyertakan file functions.php
+include '../logic/functions.php'; // Pastikan untuk menyertakan file functions.php
 
 // Menangkap data yang dikirim dari form
 $namaProduk = $_POST['nama_produk']; // Pastikan nama input di form sesuai
