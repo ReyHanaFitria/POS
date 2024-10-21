@@ -106,34 +106,65 @@ function ambilDataProduk($mysqli)
     return $result;
 }
 
-// get data transaksi
+// Get transaction data
 function ambilDetailTransaksi($mysqli, $transaksiId)
 {
-    $stmt = $mysqli->prepare("SELECT * FROM transaksi WHERE id_transaksi = ?");
+    // Prepare the SQL statement
+    $stmt = $mysqli->prepare("
+        SELECT t.id_transaksi, t.tanggal, t.total_harga, p.nama_produk, dt.jumlah, p.harga
+        FROM transaksi t
+        JOIN detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
+        JOIN produk p ON dt.id_produk = p.id_produk
+        WHERE t.id_transaksi = ?
+    ");
+
+    // Bind the parameter
     $stmt->bind_param("i", $transaksiId);
+
+    // Execute the statement
     $stmt->execute();
+
+    // Get the result
     $result = $stmt->get_result();
 
+    // Check if any rows were returned
     if ($result->num_rows === 0) {
         throw new Exception("Transaksi tidak ditemukan.");
     }
 
-    $transaksi = $result->fetch_assoc();
+    // Initialize an array to hold the transaction details
+    $transaksi = [
+        'id_transaksi' => null,
+        'tanggal' => null,
+        'total_harga' => 0,
+        'produk' => []
+    ];
 
-    // Ambil detail produk terkait transaksi
-    $stmt = $mysqli->prepare("SELECT p.nama_produk, tp.jumlah, tp.harga FROM transaksi_produk tp JOIN produk p ON tp.id_produk = p.id_produk WHERE tp.id_transaksi = ?");
-    $stmt->bind_param("i", $transaksiId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $produk = [];
+    // Fetch the results
     while ($row = $result->fetch_assoc()) {
-        $produk[] = $row;
+        // Populate the transaction details
+        if ($transaksi['id_transaksi'] === null) {
+            $transaksi['id_transaksi'] = $row['id_transaksi'];
+            $transaksi['tanggal'] = $row['tanggal'];
+            $transaksi['total_harga'] = $row['total_harga'];
+        }
+
+        // Create an array for the product details
+        $produk = [
+            'nama_produk' => $row['nama_produk'],
+            'jumlah' => $row['jumlah'],
+            'harga' => $row['harga'],
+        ];
+
+        // Append the product to the transaction's product list
+        $transaksi['produk'][] = $produk;
     }
 
-    $transaksi['produk'] = $produk;
+    // Return the transaction details
     return $transaksi;
 }
+
+
 
 // store product
 function simpanProduk($mysqli, $namaProduk, $harga, $stok)
