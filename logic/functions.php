@@ -96,7 +96,7 @@ function ambilDataPetugas($mysqli, $id_petugas = null)
 // get data produk
 function ambilDataProduk($mysqli)
 {
-    $query = "SELECT * FROM produk ORDER BY id_produk DESC";
+    $query = "SELECT p.*, k.nama_kategori FROM produk p LEFT JOIN kategori_produk k ON p.id_kategori = k.id_kategori order by p.id_produk desc";
     $result = $mysqli->query($query);
 
     if (!$result) {
@@ -104,6 +104,36 @@ function ambilDataProduk($mysqli)
     }
 
     return $result;
+}
+function ambilDataCategory($mysqli)
+{
+    $query = "SELECT * FROM kategori_produk ORDER BY id_kategori DESC";
+    $result = $mysqli->query($query);
+
+    if (!$result) {
+        throw new Exception("Gagal mengambil data produk: " . $mysqli->error);
+    }
+
+    return $result;
+}
+
+function ambilDataProdukByKategori($mysqli, $id_kategori)
+{
+    $stmt = $mysqli->prepare("
+        SELECT p.*, k.nama_kategori 
+        FROM produk p 
+        JOIN kategori_produk k ON p.id_kategori = k.id_kategori 
+        WHERE p.id_kategori = ?
+    ");
+    $stmt->bind_param("i", $id_kategori);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        return $result->fetch_all(MYSQLI_ASSOC);
+    } else {
+        throw new Exception("Tidak ada produk ditemukan untuk kategori ini.");
+    }
 }
 
 // Get transaction data
@@ -164,17 +194,51 @@ function ambilDetailTransaksi($mysqli, $transaksiId)
     return $transaksi;
 }
 
+function ambilDataDetailTransaksiBulanan($mysqli, $bulan, $tahun)
+{
+    $stmt = $mysqli->prepare("
+        SELECT p.nama_produk, SUM(dt.jumlah) AS total_jumlah, p.harga
+        FROM detail_transaksi dt
+        JOIN produk p ON dt.id_produk = p.id_produk
+        JOIN transaksi t ON dt.id_transaksi = t.id_transaksi
+        WHERE MONTH(t.tanggal) = ? AND YEAR(t.tanggal) = ?
+        GROUP BY p.id_produk
+    ");
+    $stmt->bind_param("ii", $bulan, $tahun);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
 
 // store product
-function simpanProduk($mysqli, $namaProduk, $harga, $stok)
+function simpanProduk($mysqli, $namaProduk, $harga, $stok, $idKategori)
 {
-    $stmt = $mysqli->prepare("INSERT INTO produk (nama_produk, harga, stok) VALUES (?, ?, ?)");
-    $stmt->bind_param("sdi", $namaProduk, $harga, $stok); // 's' untuk string, 'd' untuk double, 'i' untuk integer
+    // Persiapkan statement untuk menyimpan produk
+    $stmt = $mysqli->prepare("INSERT INTO produk (nama_produk, harga, stok, id_kategori) VALUES (?, ?, ?, ?)");
+
+    // Bind parameter: 's' untuk string, 'd' untuk double, 'i' untuk integer
+    $stmt->bind_param("sdii", $namaProduk, $harga, $stok, $idKategori);
+
+    // Eksekusi statement
+    $result = $stmt->execute();
+
+    // Cek apakah eksekusi berhasil
+    if (!$result) {
+        throw new Exception("Gagal menyimpan produk: " . $stmt->error);
+    }
+
+    return $result; // Kembalikan hasil eksekusi
+}
+
+function simpanKategri($mysqli, $nama_kategori)
+{
+    $stmt = $mysqli->prepare("INSERT INTO kategori_produk (nama_kategori) VALUES (?)");
+    $stmt->bind_param("s", $nama_kategori); // 's' untuk string, 'd' untuk double, 'i' untuk integer
     $result = $stmt->execute();
 
     if (!$result) {
-        throw new Exception("Gagal menyimpan produk: " . $stmt->error);
+        throw new Exception("Gagal menyimpan kategori: " . $stmt->error);
     }
 
     return $result;
@@ -197,14 +261,33 @@ function updatePetugas($mysqli, $id_petugas, $nama_petugas, $username, $password
 }
 
 // update product
-function updateProduk($mysqli, $produkID, $namaProduk, $harga, $stok)
+function updateProduk($mysqli, $produkID, $namaProduk, $harga, $stok, $idKategori)
 {
-    $stmt = $mysqli->prepare("UPDATE produk SET nama_produk = ?, harga = ?, stok = ? WHERE id_produk = ?");
-    $stmt->bind_param("sdii", $namaProduk, $harga, $stok, $produkID); // 's' untuk string, 'd' untuk double, 'i' untuk integer
+    // Persiapkan statement untuk memperbarui produk
+    $stmt = $mysqli->prepare("UPDATE produk SET nama_produk = ?, harga = ?, stok = ?, id_kategori = ? WHERE id_produk = ?");
+
+    // Bind parameter: 's' untuk string, 'd' untuk double, 'i' untuk integer
+    $stmt->bind_param("sdiis", $namaProduk, $harga, $stok, $idKategori, $produkID);
+
+    // Eksekusi statement
+    $result = $stmt->execute();
+
+    // Cek apakah eksekusi berhasil
+    if (!$result) {
+        throw new Exception("Gagal memperbarui produk: " . $stmt->error);
+    }
+
+    return $result; // Kembalikan hasil eksekusi
+}
+
+function updateKategori($mysqli, $kategoriID, $namaKategori)
+{
+    $stmt = $mysqli->prepare("UPDATE kategori_produk SET nama_kategori = ? WHERE id_kategori = ?");
+    $stmt->bind_param("si", $namaKategori, $kategoriID); // 's' untuk string, 'd' untuk double, 'i' untuk integer
     $result = $stmt->execute();
 
     if (!$result) {
-        throw new Exception("Gagal memperbarui produk: " . $stmt->error);
+        throw new Exception("Gagal memperbarui kategori: " . $stmt->error);
     }
 
     return $result;
@@ -245,6 +328,19 @@ function hapusProduk($mysqli, $id_produk)
 
     if (!$result) {
         throw new Exception("Gagal menghapus produk: " . $stmt->error);
+    }
+
+    return $result;
+}
+
+function hapusKategori($mysqli, $id_kategori)
+{
+    $stmt = $mysqli->prepare("DELETE FROM kategori_produk WHERE id_kategori = ?");
+    $stmt->bind_param("i", $id_kategori);
+    $result = $stmt->execute();
+
+    if (!$result) {
+        throw new Exception("Gagal menghapus kategori: " . $stmt->error);
     }
 
     return $result;

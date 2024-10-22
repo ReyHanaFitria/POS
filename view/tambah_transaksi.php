@@ -65,20 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             /* Font modern */
         }
 
-        .container {
-            max-width: 900px;
-            /* Lebar maksimum kontainer */
-            margin-top: 50px;
-            /* Jarak atas kontainer */
-            background-color: white;
-            /* Latar belakang putih */
-            border-radius: 0.5rem;
-            /* Sudut membulat */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            /* Bayangan */
-            padding: 30px;
-            /* Padding di dalam kontainer */
-        }
 
         h2 {
             text-align: center;
