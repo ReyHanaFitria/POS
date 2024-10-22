@@ -141,13 +141,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="total_harga" class="form-label">Total Harga</label>
                 <input type="number" name="total_harga" id="total_harga" class="form-control" readonly>
             </div>
-            <div id="detail-container">
-                <h4>Detail Transaksi</h4>
+            <div class="mb-3" id="detail-container">
+                <label for="detail" class="form-label">Detail Transaksi</label>
                 <div class="detail-item">
                     <select name="produk[0][id_produk]" class="form-control select-produk mb-2" required onchange="setHarga(this, 0)">
                         <option value="" disabled selected>Pilih Produk</option>
                         <?php while ($row = $result_produk->fetch_assoc()): ?>
-                            <option value="<?= $row['id_produk'] ?>" data-harga="<?= $row['harga'] ?>" data-stok="<?= $row['stok'] ?>">
+                            <option value="<?= $row['id_produk'] ?>" data-harga="<?= $row['harga'] ?>" data-stok="<?= $row['stok'] ?>" <?= ($row['stok'] == 0) ? 'disabled' : ''; ?>>
                                 <?= ucwords($row['nama_produk']) ?> (Stok: <?= $row['stok'] ?>)
                             </option>
                         <?php endwhile; ?>
@@ -211,10 +211,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Set harga produk otomatis saat dipilih
+        // Set harga produk otomatis saat dipilih
         function setHarga(select, index) {
             const harga = select.options[select.selectedIndex].getAttribute('data-harga');
+            const stok = select.options[select.selectedIndex].getAttribute('data-stok');
             document.getElementsByName(`produk[${index}][harga]`)[0].value = harga;
             hitungSubtotal(index);
+
+            // Cek stok
+            if (stok == 0) {
+                // Tampilkan pesan jika stok habis
+                alert("Stok barang habis, silahkan perbarui stok");
+                // Reset pilihan produk jika stok habis
+                select.value = "";
+                document.getElementsByName(`produk[${index}][harga]`)[0].value = "";
+                document.getElementsByName(`produk[${index}][jumlah]`)[0].value = "";
+            }
         }
 
         // Hitung subtotal dan total harga
