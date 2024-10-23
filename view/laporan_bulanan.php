@@ -18,15 +18,15 @@ try {
 ?>
 
 <div class="container mt-4">
-    <h2>Laporan Detail Transaksi Bulanan</h2>
+    <h2>Laporan Pendapatan</h2>
     <form method="get" action="">
         <div class="row mb-3">
             <div class="col">
-                <select name="bulan" class="form-select">
-                    <?php for ($i = 1; $i <= 12; $i++): ?>
-                        <option value="<?= $i; ?>" <?= ($i == $bulan) ? 'selected' : ''; ?>><?= date('F', mktime(0, 0, 0, $i, 1)); ?></option>
-                    <?php endfor; ?>
-                </select>
+            <select name="bulan" class="form-select">
+                <?php foreach ($namaBulan as $i => $bulanNama): ?>
+                    <option value="<?= $i; ?>" <?= ($i == $bulan) ? 'selected' : ''; ?>><?= $bulanNama; ?></option>
+                <?php endforeach; ?>
+            </select>
             </div>
             <div class="col">
                 <input type="number" name="tahun" class="form-control" value="<?= $tahun; ?>" required>

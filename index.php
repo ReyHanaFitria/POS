@@ -22,7 +22,7 @@
                                 }
                             }
                             ?>
-                            <form method="post" action="cek_login.php">
+                            <form method="post" action="class/Login.php">
                                 <div class="form-group">
                                     <label>Username</label>
                                     <input type="text" class="form-control" name="username">
