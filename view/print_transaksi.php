@@ -29,7 +29,7 @@ $transaksiDetails = $transaksi->getTransaksiDetails($transaksiId);
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="container">
         <h2 class="text-center fw-bold">SINOM COFFEE</h2>
         <p class="text-center">Jl. Babakan Anyar No. 32, Babakan Anyar, Kec. Kadipaten, Kab Majalengka, Jawa Barat, No Tlp : 083871564273</p>
         <p>Tanggal: <?= formatTanggal($transaksiDetails['tanggal']) ?></p>
