@@ -1,6 +1,7 @@
 <?php
 include "../koneksi.php";
 include "../class/Transaksi.php";
+include "../logic/functions.php";
 include "header.php";
 
 $transaksi = new Transaksi($mysqli);
@@ -16,6 +17,19 @@ $jumlahHari = $bulan ? cal_days_in_month(CAL_GREGORIAN, $bulan, $tahun) : 31;
 // Ambil transaksi berdasarkan filter
 $transaksis = $transaksi->getTransaksi($bulan, $tahun, $tanggal);
 ?>
+
+<style>
+    /* Atur modal agar berada di paling atas */
+    .modal {
+        z-index: 1055 !important;
+        /* Pastikan z-index lebih tinggi dari elemen lain */
+    }
+
+    /* Atur backdrop agar tidak menutupi konten */
+    .modal-backdrop {
+        z-index: 1050 !important;
+    }
+</style>
 
 <div id="content">
     <div class="container mt-4">
@@ -73,51 +87,7 @@ $transaksis = $transaksi->getTransaksi($bulan, $tahun, $tanggal);
                                 <td><?= number_format($transaksi['total_harga'], 2, ',', '.') ?></td>
                                 <td><?= htmlspecialchars($transaksi['nama_pelanggan']) ?></td>
                                 <td>
-                                    <a href="print_transaksi.php?id=<?= $transaksi['id_transaksi'] ?>" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#detailModal<?= $transaksi['id_transaksi'] ?>">Lihat Detail</a>
-                                    <div class="modal fade border-dark" id="detailModal<?= $transaksi['id_transaksi'] ?>" data-bs-backdrop="false" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="detailModalLabel">Tanggal Transaksi: <?= formatTanggal($transaksi['tanggal']) ?></h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <table class="table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>ID Produk</th>
-                                                                <th>Nama Produk</th>
-                                                                <th>Jumlah</th>
-                                                                <th>Harga</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <?php
-                                                            // Ambil detail transaksi berdasarkan id_transaksi
-                                                            $stmt = $mysqli->prepare("SELECT dt.id_produk, p.nama_produk, dt.jumlah, dt.harga FROM detail_transaksi dt JOIN produk p ON dt.id_produk = p.id_produk WHERE dt.id_transaksi = ?");
-                                                            $stmt->bind_param("i", $transaksi['id_transaksi']);
-                                                            $stmt->execute();
-                                                            $result = $stmt->get_result();
-
-                                                            while ($row = $result->fetch_assoc()) : ?>
-                                                                <tr>
-                                                                    <td><?= htmlspecialchars($row['id_produk']) ?></td>
-                                                                    <td><?= ucwords($row['nama_produk']) ?></td>
-                                                                    <td><?= htmlspecialchars($row['jumlah']) ?></td>
-                                                                    <td>Rp. <?= number_format($row['harga'], 2, ',', '.') ?></td>
-                                                                </tr>
-                                                            <?php endwhile; // Perbaiki di sini 
-                                                            ?>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                                    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#detailModal<?= $transaksi['id_transaksi'] ?>">Lihat Detail</button>
                                     <a href="print_transaksi.php?id=<?= $transaksi['id_transaksi']; ?>" class="btn btn-danger">Cetak</a>
                                 </td>
                             </tr>
@@ -128,4 +98,51 @@ $transaksis = $transaksi->getTransaksi($bulan, $tahun, $tanggal);
         </div>
     </div>
 </div>
+
+<!-- Deklarasi semua modal di bagian bawah agar berada di paling luar -->
+<?php foreach ($transaksis as $transaksi): ?>
+    <div class="modal fade" id="detailModal<?= $transaksi['id_transaksi'] ?>" data-bs-backdrop="false" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailModalLabel">Tanggal Transaksi: <?= formatTanggal($transaksi['tanggal']) ?></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID Produk</th>
+                                <th>Nama Produk</th>
+                                <th>Jumlah</th>
+                                <th>Harga</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            // Ambil detail transaksi berdasarkan id_transaksi
+                            $stmt = $mysqli->prepare("SELECT dt.id_produk, p.nama_produk, dt.jumlah, dt.harga FROM detail_transaksi dt JOIN produk p ON dt.id_produk = p.id_produk WHERE dt.id_transaksi = ?");
+                            $stmt->bind_param("i", $transaksi['id_transaksi']);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+
+                            while ($row = $result->fetch_assoc()) : ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($row['id_produk']) ?></td>
+                                    <td><?= ucwords($row['nama_produk']) ?></td>
+                                    <td><?= htmlspecialchars($row['jumlah']) ?></td>
+                                    <td>Rp. <?= number_format($row['harga'], 2, ',', '.') ?></td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endforeach; ?>
+
 <?php include 'footer.php'; ?>

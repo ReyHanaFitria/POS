@@ -3,7 +3,6 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03">
             <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
             <ul class="navbar-nav">
                 <li class="nav-item" style="cursor: pointer;"><a class="nav-link text-dark" href="index.php">Beranda</a></li>
