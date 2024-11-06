@@ -103,7 +103,7 @@ while ($kategori = $kategoriQuery->fetch_assoc()) {
                                 </div>
 
                                 <!-- Modal hapus data -->
-                                <div class="modal fade" id="hapus-data<?= $d['id_produk']; ?>" tabindex="-1">
+                                <div class="modal fade" id="hapus-data<?= $d['id_produk']; ?>" data-bs-backdrop="false" tabindex="-1">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header bg-danger text-white">

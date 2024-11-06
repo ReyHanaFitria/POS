@@ -34,7 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <div id="content">
     <div class="container mt-2">
-        <div class="card shadow-lg border-0 mb-4">
+        <a href="data_pelanggan.php" class="btn btn-primary btn-sm">
+            Kembali
+        </a>
+        <div class="card shadow-lg border-0 my-4">
             <div class="card-header mt-2">
                 <h3>Edit Pelanggan</h3>
             </div>

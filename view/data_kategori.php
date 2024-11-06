@@ -71,7 +71,7 @@ try {
                                 <div class="modal fade" id="edit-data<?= $d['id_kategori']; ?>" tabindex="-1" data-bs-backdrop="false" aria-labelledby="editModalLabel<?= $d['id_kategori']; ?>" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <div class="modal-header">
+                                            <div class="modal-header bg-info text-white">
                                                 <h1 class="modal-title fs-5" id="editModalLabel<?= $d['id_kategori']; ?>">EDIT</h1>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
@@ -96,7 +96,7 @@ try {
                                 <div class="modal fade" id="hapus-data<?= $d['id_kategori']; ?>" tabindex="-1" data-bs-backdrop="false" aria-labelledby="hapusModalLabel<?= $d['id_kategori']; ?>" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <div class="modal-header">
+                                            <div class="modal-header bg-danger text-white">
                                                 <h1 class="modal-title fs-5" id="hapusModalLabel<?= $d['id_kategori']; ?>">HAPUS</h1>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>

@@ -41,7 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <div id="content">
     <div class="container mt-2">
-        <div class="card shadow-lg border-0 mb-4">
+        <a href="user_management.php" class="btn btn-primary btn-sm">
+            Kembali
+        </a>
+        <div class="card shadow-lg border-0 my-4">
             <div class="card-header mt-2">
                 <h3>Edit User</h3>
             </div>
