@@ -1,7 +1,7 @@
 <?php
 
 
-// Mendefinisikan kelas User
+// Mendefinisikan kelas Login
 class Login
 {
     // Properti private untuk menyimpan username, password, dan level pengguna
@@ -83,13 +83,13 @@ if ($user->authenticate($login)) {
 
     // Mengalihkan pengguna ke dashboard yang sesuai berdasarkan level
     if ($user->isAdmin()) {
-        header("location:view/index.php"); // Menuju dashboard admin
+        header("location:../view/index.php"); // Menuju dashboard admin
     } elseif ($user->isPegawai()) {
-        header("location:view/index.php"); // Menuju dashboard pegawai
+        header("location:../view/index.php"); // Menuju dashboard pegawai
     } else {
         header("location:index.php?pesan=gagal"); // Jika tidak ada level yang sesuai
     }
 } else {
     // Jika autentikasi gagal, mengalihkan kembali ke halaman login dengan pesan gagal
-    header("location:index.php?pesan=gagal");
+    header("location:../index.php?pesan=gagal");
 }

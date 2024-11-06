@@ -12,6 +12,7 @@ if ($mysqli->connect_error) {
 	die("Koneksi gagal: " . $mysqli->connect_error);
 }
 
+// Function tambahan untuk memformat tanggal
 function formatTanggal($tanggal)
 {
 	// Mengubah string tanggal menjadi objek DateTime

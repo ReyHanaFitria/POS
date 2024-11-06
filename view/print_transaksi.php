@@ -36,7 +36,7 @@ $transaksiDetails = $transaksi->getTransaksiDetails($transaksiId);
         <p>Pelanggan: <?= ucwords($transaksiDetails['customer_name']) ?></p> <!-- Display customer name -->
 
         <!-- Tampilkan uang pelanggan dan kembalian -->
-        <p>Uang Pelanggan: <strong>Rp. <?= number_format($transaksiDetails['uang'], 2, ',', '.') ?></strong></p>
+        <p>Uang: <strong>Rp. <?= number_format($transaksiDetails['uang'], 2, ',', '.') ?></strong></p>
         <p>Total Belanja: <strong>Rp. <?= number_format($transaksiDetails['total_harga'], 2, ',', '.') ?></strong></p>
         <p>Kembalian: <strong>Rp. <?= number_format($transaksiDetails['kembalian'], 2, ',', '.') ?></strong></p>
 

@@ -77,6 +77,14 @@ class Transaksi
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getTransaksiByMonthAndYear($bulan, $tahun) {
+        $stmt = $this->db->prepare("SELECT * FROM transaksi WHERE MONTH(tanggal) = ? AND YEAR(tanggal) = ?");
+        $stmt->bind_param("ii", $bulan, $tahun);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getTransaksiDetails($transaksiId)
     {
         // Prepare the SQL statement to prevent SQL injection
