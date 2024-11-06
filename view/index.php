@@ -1,90 +1,127 @@
 <?php
 include "header.php";
-include "navbar.php";
+include '../koneksi.php';
+include "../logic/functions.php";
+
+$tahun = isset($_POST['tahun']) ? intval($_POST['tahun']) : date('Y');
+
+// Ambil data transaksi bulanan
+try {
+    $dataBulanan = ambilDataDetailTransaksiPerBulan($mysqli, $tahun);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+    exit();
+}
+
+// Inisialisasi data untuk grafik
+$labels = [];
+$data = [];
+
+for ($i = 1; $i <= 12; $i++) {
+    $labels[] = date('F', mktime(0, 0, 0, $i, 1));
+    $data[] = $dataBulanan[$i]['total'] ?? 0; // Jika tidak ada transaksi, set 0
+}
 ?>
-<style>
-    body {
-        background-color: #f8f9fa;
-        /* Latar belakang terang */
-        font-family: Arial, sans-serif;
-        /* Font yang lebih modern */
-    }
+<div id="content">
+    <div class="container mt-2">
+        <h1>Selamat Datang, <?= htmlspecialchars($nama_user); ?></h1>
+        <hr>
 
-    .container {
-        max-width: 1200px;
-        /* Lebar maksimum kontainer */
-    }
-
-    .card {
-        border-radius: 0.5rem;
-        /* Sudut membulat */
-        transition: transform 0.3s;
-        /* Transisi halus */
-    }
-
-    .card:hover {
-        transform: scale(1.05);
-        /* Sedikit membesar saat hover */
-    }
-
-    .card-title {
-        font-weight: bold;
-        /* Judul tebal */
-        margin-bottom: 1rem;
-        /* Jarak bawah judul */
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        /* Warna tombol */
-        border-color: #007bff;
-        /* Warna border tombol */
-    }
-
-    .btn-primary:hover {
-        background-color: #0056b3;
-        /* Warna latar belakang saat hover */
-        border-color: #0056b3;
-        /* Warna border saat hover */
-    }
-</style>
-
-<div class="container mt-3">
-    <div class="row">
-        <div class="col-sm-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Data Barang</h5>
-                    <a href="data_barang.php" class="btn btn-primary btn-sm">Detail</a>
+        <div class="row mt-5">
+            <div class="col-sm-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Data Barang</h5>
+                        <a onclick="loadPage('data_barang.php')" class="btn btn-primary btn-sm">Detail</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Laporan Transaksi</h5>
+                        <a onclick="loadPage('laporan.php')" class="btn btn-primary btn-sm">Detail</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Stok Barang</h5>
+                        <a onclick="loadPage('data_barang.php')" class="btn btn-primary btn-sm">Detail</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Data Pelanggan</h5>
+                        <a onclick="loadPage('data_pelanggan.php')" class="btn btn-primary btn-sm">Detail</a>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Laporan Transaksi</h5>
-                    <a href="laporan.php" class="btn btn-primary btn-sm">Detail</a>
-                </div>
+
+        <div class="card shadow-lg border-0 my-4" style="backdrop-filter: blur(10px); --bs-card-bg: none; ">
+            <div class="card-header">
+                <h5 class="text-dark mt-2">Dashboard Transaksi Per Bulan</h5>
             </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Stok Barang</h5>
-                    <a href="data_barang.php" class="btn btn-primary btn-sm">Detail</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Data Pelanggan</h5>
-                    <a href="data_pelanggan.php" class="btn btn-primary btn-sm">Detail</a>
-                </div>
+            <div class="card-body">
+                <form method="post" action="">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label>Tahun</label>
+                            <input type="number" name="tahun" class="form-control" value="<?= $tahun; ?>" required onchange="this.form.submit()">
+                        </div>
+                    </div>
+                </form>
+
+                <canvas id="transaksiChart"></canvas>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Tambahkan library Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data untuk grafik
+    const labels = <?= json_encode($labels) ?>;
+    const data = <?= json_encode($data) ?>;
+
+    // Inisialisasi grafik menggunakan Chart.js
+    const ctx = document.getElementById('transaksiChart').getContext('2d');
+    const transaksiChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Jumlah Transaksi',
+                data: data,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Jumlah Transaksi'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Bulan'
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 <?php
 include "footer.php";

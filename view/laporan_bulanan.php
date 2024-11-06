@@ -1,79 +1,104 @@
 <?php
 include "header.php";
-include "navbar.php";
-include '../koneksi.php'; // Include database connection
-include "../logic/functions.php"; // Include functions file
+include '../koneksi.php';
+include "../logic/functions.php";
 
-// Ambil bulan dan tahun dari parameter GET
-$bulan = isset($_GET['bulan']) ? intval($_GET['bulan']) : date('n'); // Default ke bulan saat ini
-$tahun = isset($_GET['tahun']) ? intval($_GET['tahun']) : date('Y'); // Default ke tahun saat ini
+// Ambil parameter POST: bulan, tahun, dan tanggal
+$bulan = isset($_POST['bulan']) ? intval($_POST['bulan']) : date('n');
+$tahun = isset($_POST['tahun']) ? intval($_POST['tahun']) : date('Y');
+$tanggal = isset($_POST['tanggal']) ? intval($_POST['tanggal']) : null;
+
+// Hitung jumlah hari dalam bulan yang dipilih
+$jumlahHari = cal_days_in_month(CAL_GREGORIAN, $bulan, $tahun);
 
 try {
-    // Fetch monthly detail transactions
-    $data = ambilDataDetailTransaksiBulanan($mysqli, $bulan, $tahun);
+    // Cek jika tanggal diisi, ambil data harian. Jika tidak, ambil data bulanan.
+    if (!empty($tanggal)) {
+        $data = ambilDataDetailTransaksiHarian($mysqli, $tahun, $bulan, $tanggal);
+    } else {
+        $data = ambilDataDetailTransaksiBulanan($mysqli, $bulan, $tahun);
+    }
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
     exit();
 }
 ?>
 
-<div class="container mt-4">
-    <h2>Laporan Detail Transaksi Bulanan</h2>
-    <form method="get" action="">
-        <div class="row mb-3">
-            <div class="col">
-                <select name="bulan" class="form-select">
-                    <?php for ($i = 1; $i <= 12; $i++): ?>
-                        <option value="<?= $i; ?>" <?= ($i == $bulan) ? 'selected' : ''; ?>><?= date('F', mktime(0, 0, 0, $i, 1)); ?></option>
-                    <?php endfor; ?>
-                </select>
+<div id="content">
+    <div class="container mt-2">
+        <div class="card shadow-lg border-0 mb-4" style="backdrop-filter: blur(10px); --bs-card-bg: none; ">
+            <div class="card-header">
+                <h5 class="text-dark mt-2">Laporan Detail Transaksi</h5>
             </div>
-            <div class="col">
-                <input type="number" name="tahun" class="form-control" value="<?= $tahun; ?>" required>
-            </div>
-            <div class="col">
-                <button type="submit" class="btn btn-primary">Tampilkan</button>
+            <div class="card-body">
+                <form method="post" action="">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label>Tahun</label>
+                            <input type="number" name="tahun" class="form-control" value="<?= $tahun; ?>" required onchange="this.form.submit()">
+                        </div>
+                        <div class="col">
+                            <label>Bulan</label>
+                            <select name="bulan" class="form-select" onchange="this.form.submit()">
+                                <?php for ($i = 1; $i <= 12; $i++): ?>
+                                    <option value="<?= $i; ?>" <?= ($i == $bulan) ? 'selected' : ''; ?>>
+                                        <?= date('F', mktime(0, 0, 0, $i, 1)); ?>
+                                    </option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label>Tanggal (Opsional)</label>
+                            <select name="tanggal" class="form-select" onchange="this.form.submit()">
+                                <option value="">Pilih Tanggal</option>
+                                <?php for ($i = 1; $i <= $jumlahHari; $i++): ?>
+                                    <option value="<?= $i; ?>" <?= ($i == $tanggal) ? 'selected' : ''; ?>>
+                                        <?= $i; ?>
+                                    </option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <table class="table table-hover table-borderless align-middle">
+                    <thead>
+                        <tr class="table-primary">
+                            <th>Nama Produk</th>
+                            <th>Jumlah</th>
+                            <th>Harga Satuan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($data)): ?>
+                            <tr>
+                                <td colspan="3" class="text-center">Tidak ada data transaksi untuk periode ini.</td>
+                            </tr>
+                        <?php else: ?>
+                            <?php
+                            $totalPendapatan = 0;
+                            foreach ($data as $transaksi):
+                                $pendapatan = $transaksi['total_jumlah'] * $transaksi['harga'];
+                                $totalPendapatan += $pendapatan;
+                            ?>
+                                <tr>
+                                    <td><?= htmlspecialchars(ucwords($transaksi['nama_produk'])); ?></td>
+                                    <td><?= $transaksi['total_jumlah']; ?></td>
+                                    <td>Rp. <?= number_format($transaksi['harga'], 0, ',', '.'); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+
+                <?php if (!empty($data)): ?>
+                    <div class="alert alert-info">
+                        <strong>Total Pendapatan: </strong> Rp. <?= number_format($totalPendapatan, 0, ',', '.'); ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
-    </form>
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nama Produk</th>
-                <th>Jumlah</th>
-                <th>Harga Satuan</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (empty($data)): ?>
-                <tr>
-                    <td colspan="3" class="text-center">Tidak ada data transaksi untuk bulan ini.</td>
-                </tr>
-            <?php else: ?>
-                <?php
-                $totalPendapatan = 0; // Inisialisasi total pendapatan
-                foreach ($data as $transaksi):
-                    $pendapatan = $transaksi['total_jumlah'] * $transaksi['harga']; // Hitung pendapatan per produk
-                    $totalPendapatan += $pendapatan; // Tambahkan ke total pendapatan
-                ?>
-                    <tr>
-                        <td><?= htmlspecialchars($transaksi['nama_produk']); ?></td>
-                        <td><?= $transaksi['total_jumlah']; ?></td>
-                        <td>Rp. <?= number_format($transaksi['harga'], 0, ',', '.'); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </tbody>
-    </table>
-
-    <?php if (!empty($data)): ?>
-        <div class="alert alert-info">
-            <strong>Total Pendapatan: </strong> Rp. <?= number_format($totalPendapatan, 0, ',', '.'); ?>
-        </div>
-    <?php endif; ?>
+    </div>
 </div>
 
-<?php
-include "footer.php";
-?>
+<?php include "footer.php"; ?>

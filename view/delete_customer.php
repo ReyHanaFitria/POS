@@ -8,7 +8,7 @@ if (isset($_GET['id'])) {
     try {
         // Hapus pelanggan dari database
         hapusPelanggan($mysqli, $pelanggan_id);
-        header("Location: data_pelanggan.php?pesan=hapus");
+        echo '<script>window.location.href = "data_pelanggan.php?pesan=hapus"; </script>';
         exit();
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();

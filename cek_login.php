@@ -5,6 +5,7 @@
 class Login
 {
     // Properti private untuk menyimpan username, password, dan level pengguna
+    private $nama_petugas;
     private $username;
     private $password;
     private $level;
@@ -30,6 +31,7 @@ class Login
         // Jika data ditemukan, set level dan kembalikan true
         if ($data) {
             $this->level = $data['level'];
+            $this->nama_petugas = $data['nama_petugas'];
             return true;
         } else {
             // Jika tidak ditemukan, kembalikan false
@@ -55,6 +57,12 @@ class Login
         return $this->username;
     }
 
+    // Metode getter untuk mengakses username
+    public function getName()
+    {
+        return $this->nama_petugas;
+    }
+
     // Metode getter untuk mengakses level
     public function getLevel()
     {
@@ -65,6 +73,9 @@ class Login
 // Membuat objek User baru dengan username dan password yang diterima dari form
 $user = new Login($_POST['username'], $_POST['password']);
 
+
+// var_dump($user);
+// die();
 // Menghubungkan ke database
 $login = mysqli_connect("localhost", "root", "", "pos");
 
@@ -79,6 +90,7 @@ if ($user->authenticate($login)) {
 
     // Mengatur variabel session menggunakan metode getter
     $_SESSION['username'] = $user->getUsername();
+    $_SESSION['nama_petugas'] = $user->getName();
     $_SESSION['level'] = $user->getLevel();
 
     // Mengalihkan pengguna ke dashboard yang sesuai berdasarkan level

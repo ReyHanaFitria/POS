@@ -17,7 +17,7 @@ if (isset($_GET['id'])) {
     try {
         // Hapus petugas dari database
         hapusPetugas($mysqli, $id_petugas);
-        header("Location: user_management.php?pesan=hapus");
+        echo '<script>window.location.href = "user_management.php?pesan=hapus"; </script>';
         exit();
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();

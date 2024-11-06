@@ -71,9 +71,50 @@ class Transaksi
     }
 
     // Fungsi untuk menampilkan semua transaksi
-    public function getTransaksi()
+    public function getTransaksi($bulan = null, $tahun = null, $tanggal = null)
     {
-        $result = $this->db->query("SELECT * FROM transaksi order by id_transaksi desc");
+        // Query dasar tanpa filter
+        $query = "
+        SELECT t.*, p.NamaPelanggan AS nama_pelanggan 
+        FROM transaksi t 
+        JOIN pelanggan p ON t.id_customer = p.PelangganID 
+        WHERE 1=1";  // Kondisi 1=1 agar query tetap valid meskipun tidak ada filter
+
+        // Tambahkan filter tahun jika dipilih
+        if ($tahun) {
+            $query .= " AND YEAR(t.tanggal) = ?";
+        }
+
+        // Tambahkan filter bulan jika dipilih
+        if ($bulan) {
+            $query .= " AND MONTH(t.tanggal) = ?";
+        }
+
+        // Tambahkan filter tanggal jika dipilih
+        if ($tanggal) {
+            $query .= " AND DAY(t.tanggal) = ?";
+        }
+
+        $query .= " ORDER BY t.id_transaksi DESC";
+
+        // Siapkan statement berdasarkan jumlah parameter
+        $stmt = $this->db->prepare($query);
+
+        // Bind parameter sesuai kondisi
+        if ($tahun && $bulan && $tanggal) {
+            $stmt->bind_param('iii', $tahun, $bulan, $tanggal);
+        } elseif ($tahun && $bulan) {
+            $stmt->bind_param('ii', $tahun, $bulan);
+        } elseif ($tahun && $tanggal) {
+            $stmt->bind_param('ii', $tahun, $tanggal);
+        } elseif ($tahun) {
+            $stmt->bind_param('i', $tahun);
+        }
+
+        // Eksekusi dan ambil hasil
+        $stmt->execute();
+        $result = $stmt->get_result();
+
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
