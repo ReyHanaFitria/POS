@@ -11,7 +11,7 @@ $dataTransaksi = $transaksi->getTransaksi();
         <div class="card shadow-lg border-0 mb-4" style="backdrop-filter: blur(10px); --bs-card-bg: none; ">
             <div class="card-body">
                 <a href="tambah_transaksi.php" class="btn btn-primary mb-3">Tambah Transaksi</a>
-                <table class="table table-hover table-borderless align-middle text-center">
+                <table id="datatable" class="table table-hover table-borderless align-middle text-center">
                     <thead class="table-primary">
                         <tr>
                             <th>ID Transaksi</th>

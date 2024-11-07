@@ -32,7 +32,7 @@ try {
             </div>
             <div class="card-body">
                 <form method="post" action="">
-                    <div class="row mb-3">
+                    <div class="row mb-3 justify-content-center">
                         <div class="col">
                             <label>Tahun</label>
                             <input type="number" name="tahun" class="form-control" value="<?= $tahun; ?>" required onchange="this.form.submit()">
@@ -58,47 +58,85 @@ try {
                                 <?php endfor; ?>
                             </select>
                         </div>
+                        <div class="col">
+                            <br>
+                            <button class="btn btn-primary" onclick="printTable()">Print Laporan</button>
+                        </div>
                     </div>
                 </form>
 
-                <table class="table table-hover table-borderless align-middle">
-                    <thead>
-                        <tr class="table-primary">
-                            <th>Nama Produk</th>
-                            <th>Jumlah</th>
-                            <th>Harga Satuan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (empty($data)): ?>
-                            <tr>
-                                <td colspan="3" class="text-center">Tidak ada data transaksi untuk periode ini.</td>
-                            </tr>
-                        <?php else: ?>
-                            <?php
-                            $totalPendapatan = 0;
-                            foreach ($data as $transaksi):
-                                $pendapatan = $transaksi['total_jumlah'] * $transaksi['harga'];
-                                $totalPendapatan += $pendapatan;
-                            ?>
-                                <tr>
-                                    <td><?= htmlspecialchars(ucwords($transaksi['nama_produk'])); ?></td>
-                                    <td><?= $transaksi['total_jumlah']; ?></td>
-                                    <td>Rp. <?= number_format($transaksi['harga'], 0, ',', '.'); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                <!-- Tombol Print -->
 
-                <?php if (!empty($data)): ?>
-                    <div class="alert alert-info">
-                        <strong>Total Pendapatan: </strong> Rp. <?= number_format($totalPendapatan, 0, ',', '.'); ?>
+                <!-- Div untuk Tabel Laporan -->
+                <div id="printableArea">
+                    <!-- Menampilkan informasi filter -->
+                    <div class="alert alert-info mb-3">
+                        <strong>Filter: </strong>
+                        <?php
+                        // Menampilkan bulan
+                        $bulanNama = date('F', mktime(0, 0, 0, $bulan, 1));
+                        echo "$bulanNama, $tahun";
+                        // Menampilkan tanggal jika ada
+                        if ($tanggal) {
+                            echo ", Tanggal: $tanggal";
+                        }
+                        ?>
                     </div>
-                <?php endif; ?>
+
+                    <!-- Tabel Laporan -->
+                    <table class="table table-hover table-borderless align-middle">
+                        <thead>
+                            <tr class="table-primary">
+                                <th>Nama Produk</th>
+                                <th>Jumlah</th>
+                                <th>Harga Satuan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($data)): ?>
+                                <tr>
+                                    <td colspan="3" class="text-center">Tidak ada data transaksi untuk periode ini.</td>
+                                </tr>
+                            <?php else: ?>
+                                <?php
+                                $totalPendapatan = 0;
+                                foreach ($data as $transaksi):
+                                    $pendapatan = $transaksi['total_jumlah'] * $transaksi['harga'];
+                                    $totalPendapatan += $pendapatan;
+                                ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars(ucwords($transaksi['nama_produk'])); ?></td>
+                                        <td><?= $transaksi['total_jumlah']; ?></td>
+                                        <td>Rp. <?= number_format($transaksi['harga'], 0, ',', '.'); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+
+                    <?php if (!empty($data)): ?>
+                        <div class="alert alert-info">
+                            <strong>Total Pendapatan: </strong> Rp. <?= number_format($totalPendapatan, 0, ',', '.'); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <?php include "footer.php"; ?>
+
+<script>
+    function printTable() {
+        var printContent = document.getElementById('printableArea');
+        var printWindow = window.open('', '', 'height=400,width=800');
+        printWindow.document.write('<html><head><title>Laporan Detail Transaksi</title>');
+        printWindow.document.write('<style>body{font-family: Arial, sans-serif;} table {width: 100%; border-collapse: collapse;} th, td {padding: 8px; text-align: left;} th {background-color: #f2f2f2;} tr:nth-child(even) {background-color: #f9f9f9;} .alert-info {font-weight: bold;} </style>');
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(printContent.innerHTML);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+    }
+</script>

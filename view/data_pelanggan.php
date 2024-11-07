@@ -37,7 +37,7 @@ try {
                         </div>
                     <?php } ?>
                 <?php } ?>
-                <table class="table table-hover table-borderless align-middle">
+                <table id="datatable" class="table table-hover table-borderless align-middle">
                     <thead class="table-primary">
                         <tr>
                             <th>ID</th>
