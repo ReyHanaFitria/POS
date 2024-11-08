@@ -21,48 +21,12 @@ for ($i = 1; $i <= 12; $i++) {
     $labels[] = date('F', mktime(0, 0, 0, $i, 1));
     $data[] = $dataBulanan[$i]['total'] ?? 0; // Jika tidak ada transaksi, set 0
 }
+
 ?>
+
 <div id="content">
     <div class="container mt-2">
-        <h1>Selamat Datang, <?= htmlspecialchars($nama_user); ?></h1>
-        <hr>
-
-        <div class="row mt-5">
-            <div class="col-sm-3">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Data Barang</h5>
-                        <a onclick="loadPage('data_barang.php')" class="btn btn-primary btn-sm">Detail</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Laporan Transaksi</h5>
-                        <a onclick="loadPage('laporan.php')" class="btn btn-primary btn-sm">Detail</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Stok Barang</h5>
-                        <a onclick="loadPage('data_barang.php')" class="btn btn-primary btn-sm">Detail</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Data Pelanggan</h5>
-                        <a onclick="loadPage('data_pelanggan.php')" class="btn btn-primary btn-sm">Detail</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card shadow-lg border-0 my-4" style="backdrop-filter: blur(10px); --bs-card-bg: none; ">
+        <div class="card shadow-lg border-0 mb-4" style="backdrop-filter: blur(10px); --bs-card-bg: none; ">
             <div class="card-header">
                 <h5 class="text-dark mt-2">Dashboard Transaksi Per Bulan</h5>
             </div>
@@ -81,6 +45,8 @@ for ($i = 1; $i <= 12; $i++) {
         </div>
     </div>
 </div>
+
+<?php include "footer.php"; ?>
 
 <!-- Tambahkan library Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -122,7 +88,3 @@ for ($i = 1; $i <= 12; $i++) {
         }
     });
 </script>
-
-<?php
-include "footer.php";
-?>

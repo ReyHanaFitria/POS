@@ -222,9 +222,41 @@ function ambilDataDetailTransaksiBulanan($mysqli, $bulan, $tahun)
     $stmt->bind_param("ii", $bulan, $tahun);
     $stmt->execute();
     $result = $stmt->get_result();
-
     return $result->fetch_all(MYSQLI_ASSOC);
 }
+
+function ambilDataDetailTransaksiPerBulan($mysqli, $tahun)
+{
+    $stmt = $mysqli->prepare("SELECT MONTH(tanggal) AS bulan, SUM(total_harga) AS total FROM transaksi WHERE YEAR(tanggal) = ? GROUP BY bulan");
+    $stmt->bind_param("i", $tahun);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $data = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $data[$row['bulan']] = $row;
+    }
+
+    return $data;
+}
+
+
+function ambilDataDetailTransaksiHarian($mysqli, $tahun, $bulan, $tanggal)
+{
+    $stmt = $mysqli->prepare("
+        SELECT p.nama_produk, SUM(dt.jumlah) AS total_jumlah, p.harga
+        FROM detail_transaksi dt
+        JOIN produk p ON dt.id_produk = p.id_produk
+        JOIN transaksi t ON dt.id_transaksi = t.id_transaksi
+        WHERE YEAR(t.tanggal) = ? AND MONTH(t.tanggal) = ? AND DAY(t.tanggal) = ?
+        GROUP BY p.id_produk
+    ");
+    $stmt->bind_param("iii", $tahun, $bulan, $tanggal);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
 
 // store product
 function simpanProduk($mysqli, $namaProduk, $harga, $stok, $idKategori)

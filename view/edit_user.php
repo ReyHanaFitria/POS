@@ -1,6 +1,5 @@
 <?php
 include "header.php";
-include "navbar.php";
 include "../koneksi.php"; // Include database connection
 include "../logic/functions.php"; // Include functions file
 
@@ -32,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Update user in the database
         updatePetugas($mysqli, $id_petugas, $nama_petugas, $username, $password, $level);
-        header("Location: user_management.php?pesan=update");
+        echo "<script>window.location.href = 'user_management.php?pesan=update'</script>";
         exit();
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();
@@ -40,31 +39,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
-<div class="container mt-4">
-    <h2>Edit User</h2>
-    <form method="post" action="">
-        <div class="form-group">
-            <label>Name</label>
-            <input type="text" class="form-control" name="nama_petugas" value="<?php echo htmlspecialchars($user['nama_petugas']); ?>" required>
+<div id="content">
+    <div class="container mt-2">
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-header mt-2">
+                <h3>Edit User</h3>
+            </div>
+            <div class="card-body">
+                <a href="user_management.php" class="btn btn-primary btn-sm">
+                    Kembali
+                </a>
+                <form method="post" action="">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control" name="nama_petugas" value="<?php echo htmlspecialchars($user['nama_petugas']); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" class="form-control" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Level</label>
+                        <select class="form-control" name="level" required>
+                            <option value="1" <?php echo $user['level'] == 1 ? 'selected' : ''; ?>>Admin</option>
+                            <option value="2" <?php echo $user['level'] == 2 ? 'selected' : ''; ?>>Pegawai</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Perbarui Pengguna</button>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Username</label>
-            <input type="text" class="form-control" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
-        </div>
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" class="form-control" name="password" required>
-        </div>
-        <div class="form-group">
-            <label>Level</label>
-            <select class="form-control" name="level" required>
-                <option value="1" <?php echo $user['level'] == 1 ? 'selected' : ''; ?>>Admin</option>
-                <option value="2" <?php echo $user['level'] == 2 ? 'selected' : ''; ?>>Pegawai</option>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Perbarui Pengguna</button>
-    </form>
+    </div>
 </div>
 
 <?php
