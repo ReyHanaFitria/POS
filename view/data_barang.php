@@ -21,9 +21,11 @@ while ($kategori = $kategoriQuery->fetch_assoc()) {
     <div class="container mt-2">
         <div class="card shadow-lg border-0 mb-4">
             <div class="card-body">
+                <?php if (isset($_SESSION['level']) && $_SESSION['level'] == 1): ?>
                 <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#tambah-data">
                     Tambah Data
                 </button>
+                <?php endif; ?>
                 <?php if (isset($_GET['pesan'])) { ?>
                     <div class="alert alert-success" role="alert">
                         Data Berhasil di <?= ucfirst($_GET['pesan']); ?>
@@ -31,7 +33,7 @@ while ($kategori = $kategoriQuery->fetch_assoc()) {
                 <?php } ?>
 
                 <div class="table-responsive">
-                    <table class="table table-hover table-borderless align-middle" style="--bs-table-bg: transparent !important;">
+                    <table id="datatable" class="table table-hover table-borderless align-middle" style="--bs-table-bg: transparent !important;">
                         <thead class="table-primary">
                             <tr>
                                 <th>No</th>

@@ -15,11 +15,13 @@ try {
 <div id="content">
     <div class="container mt-2">
         <div class="card shadow-lg border-0 mb-4">
+            <?php if (isset($_SESSION['level']) && $_SESSION['level'] == 1): ?>
             <div class="card-body">
                 <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#tambah-data">
                     Tambah Data
                 </button>
             </div>
+            <?php endif; ?>
 
             <div class="card-body">
                 <?php
@@ -41,7 +43,7 @@ try {
                     <?php } ?>
                 <?php } ?>
                 <div class="table-responsive">
-                    <table class="table table-hover table-borderless align-middle" style="--bs-table-bg: transparent !important;">
+                    <table id="datatable" class="table table-hover table-borderless align-middle" style="--bs-table-bg: transparent !important;">
                         <thead class="table-primary">
                             <tr>
                                 <th>No</th>
@@ -63,7 +65,9 @@ try {
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#edit-data<?= $d['id_kategori']; ?>">Edit </button>
-                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#hapus-data<?= $d['id_kategori']; ?>">Hapus</button>
+                                        <?php if (isset($_SESSION['level']) && $_SESSION['level'] == 1): ?>
+                                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#hapus-data<?= $d['id_kategori']; ?>">Hapus</button>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
 
@@ -71,7 +75,7 @@ try {
                                 <div class="modal fade" id="edit-data<?= $d['id_kategori']; ?>" tabindex="-1" data-bs-backdrop="false" aria-labelledby="editModalLabel<?= $d['id_kategori']; ?>" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <div class="modal-header">
+                                            <div class="modal-header bg-info text-white">
                                                 <h1 class="modal-title fs-5" id="editModalLabel<?= $d['id_kategori']; ?>">EDIT</h1>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
@@ -96,7 +100,7 @@ try {
                                 <div class="modal fade" id="hapus-data<?= $d['id_kategori']; ?>" tabindex="-1" data-bs-backdrop="false" aria-labelledby="hapusModalLabel<?= $d['id_kategori']; ?>" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <div class="modal-header">
+                                            <div class="modal-header bg-danger text-white">
                                                 <h1 class="modal-title fs-5" id="hapusModalLabel<?= $d['id_kategori']; ?>">HAPUS</h1>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>

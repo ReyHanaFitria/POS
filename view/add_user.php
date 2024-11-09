@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label>Level</label>
                         <select class="form-control" name="level" required>
                             <option value="1">Admin</option>
-                            <option value="2">Pegawai</option>
+                            <option value="2">Petugas</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary mt-3">Add User</button>

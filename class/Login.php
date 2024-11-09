@@ -1,5 +1,6 @@
 <?php
-
+// Mengimpor koneksi.php untuk mendapatkan koneksi database
+require '../koneksi.php';
 
 // Mendefinisikan kelas Login
 class Login
@@ -57,7 +58,7 @@ class Login
         return $this->username;
     }
 
-    // Metode getter untuk mengakses username
+    // Metode getter untuk mengakses nama petugas
     public function getName()
     {
         return $this->nama_petugas;
@@ -73,18 +74,8 @@ class Login
 // Membuat objek User baru dengan username dan password yang diterima dari form
 $user = new Login($_POST['username'], $_POST['password']);
 
-
-// var_dump($user);
-// die();
-// Menghubungkan ke database
-$login = mysqli_connect("localhost", "root", "", "pos");
-
-if (mysqli_connect_errno()) {
-    echo "Koneksi database gagal : " . mysqli_connect_error();
-}
-
 // Mengautentikasi pengguna
-if ($user->authenticate($login)) {
+if ($user->authenticate($mysqli)) {
     // Memulai session
     session_start();
 

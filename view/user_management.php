@@ -46,7 +46,7 @@ try {
                 }
                 ?>
                 <div class="table-responsive">
-                    <table class="table table-hover table-borderless align-middle" style="--bs-table-bg: transparent !important;">
+                    <table id="datatable" class="table table-hover table-borderless align-middle" style="--bs-table-bg: transparent !important;">
                         <thead class="table-primary">
                             <tr>
                                 <th>ID</th>
@@ -65,7 +65,9 @@ try {
                                     <td><?= $user['level'] == 1 ? 'Admin' : 'Petugas'; ?></td>
                                     <td>
                                         <a href="edit_user.php?id=<?= $user['id_petugas']; ?>" class="btn btn-warning">Edit</a>
-                                        <a href="delete_user.php?id=<?= $user['id_petugas']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                                        <?php if($user['id_petugas'] != 1) : ?>
+                                            <a href="delete_user.php?id=<?= $user['id_petugas']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                                        <?php endif ;?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

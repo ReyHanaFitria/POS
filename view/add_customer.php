@@ -13,7 +13,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         tambahPelanggan($mysqli, $nama_pelanggan, $alamat, $nomor_telepon);
 
         // Mengalihkan halaman kembali ke data_barang.php dengan pesan sukses
-        echo '<script>window.location.href = "data_pelanggan.php?pesan=simpan"; </script>';
+        echo "<script>
+            const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            icon: 'success',
+            title: 'Pelanggan Berhasil ditambahkan!'
+          }).then(() => {
+            window.location.href = 'data_pelanggan.php?pesan=simpan';
+        });
+        </script>";
         exit();
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();

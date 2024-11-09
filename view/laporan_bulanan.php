@@ -65,59 +65,41 @@ try {
                     </div>
                 </form>
 
-                <!-- Tombol Print -->
-
-                <!-- Div untuk Tabel Laporan -->
-                <div id="printableArea">
-                    <!-- Menampilkan informasi filter -->
-                    <div class="alert alert-info mb-3">
-                        <strong>Laporan Bulanan: </strong>
-                        <?php
-                        // Menampilkan bulan
-                        $bulanNama = date('F', mktime(0, 0, 0, $bulan, 1));
-                        echo "$bulanNama, $tahun";
-                        // Menampilkan tanggal jika ada
-                        if ($tanggal) {
-                            echo ", Tanggal: $tanggal";
-                        }
-                        ?>
-                    </div>
-
-                    <!-- Tabel Laporan -->
-                    <table class="table table-hover table-borderless align-middle">
-                        <thead>
-                            <tr class="table-primary">
-                                <th>Nama Produk</th>
-                                <th>Jumlah</th>
-                                <th>Harga Satuan</th>
+                <table class="table table-hover table-borderless align-middle">
+                    <thead>
+                        <tr class="table-primary">
+                            <th>Nama Produk</th>
+                            <th>Jumlah</th>
+                            <th>Harga Satuan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($data)): ?>
+                            <tr>
+                                <td colspan="3" class="text-center">Tidak ada data transaksi untuk periode ini.</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (empty($data)): ?>
+                        <?php else: ?>
+                            <?php
+                            $totalPendapatan = 0;
+                            foreach ($data as $transaksi):
+                                $pendapatan = $transaksi['total_jumlah'] * $transaksi['harga'];
+                                $totalPendapatan += $pendapatan;
+                            ?>
                                 <tr>
-                                    <td colspan="3" class="text-center">Tidak ada data transaksi untuk periode ini.</td>
+                                    <td><?= htmlspecialchars(ucwords($transaksi['nama_produk'])); ?></td>
+                                    <td><?= $transaksi['total_jumlah']; ?></td>
+                                    <td>Rp. <?= number_format($transaksi['harga'], 0, ',', '.'); ?></td>
                                 </tr>
-                            <?php else: ?>
-                                <?php
-                                $totalPendapatan = 0;
-                                foreach ($data as $transaksi):
-                                    $pendapatan = $transaksi['total_jumlah'] * $transaksi['harga'];
-                                    $totalPendapatan += $pendapatan;
-                                ?>
-                                    <tr>
-                                        <td><?= htmlspecialchars(ucwords($transaksi['nama_produk'])); ?></td>
-                                        <td><?= $transaksi['total_jumlah']; ?></td>
-                                        <td>Rp. <?= number_format($transaksi['harga'], 0, ',', '.'); ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-
-                    <?php if (!empty($data)): ?>
-                        <div class="alert alert-info">
-                            <strong>Total Pendapatan: </strong> Rp. <?= number_format($totalPendapatan, 0, ',', '.'); ?>
-                        </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+                    <?php if (isset($_SESSION['level']) && $_SESSION['level'] == 1): ?>
+                        <?php if (!empty($data)): ?>
+                            <div class="alert alert-info">
+                                <strong>Total Pendapatan: </strong> Rp. <?= number_format($totalPendapatan, 0, ',', '.'); ?>
+                            </div>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
             </div>

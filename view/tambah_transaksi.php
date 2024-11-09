@@ -40,10 +40,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Setelah transaksi berhasil ditambahkan
-    echo "<script>
-        alert('Transaksi berhasil ditambahkan!');
+    echo "  <script>
+    Swal.fire({
+      icon: 'success',
+      title: 'Transaksi Berhasil!',
+      text: 'Transaksi berhasil ditambahkan!',
+      showConfirmButton: true
+    }).then((result) => {
+      if (result.isConfirmed) {
         window.location.href = 'print_transaksi.php?id=' + $id_transaksi;
-      </script>";
+      }
+    });
+  </script>";
 }
 
 ?>

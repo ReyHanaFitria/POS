@@ -20,9 +20,14 @@ if (isset($_POST['logout'])) {
 	<title>SINOM CAFFE</title>
 	<!-- Link font -->
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="shortcut icon" href="../assets/logopink.png" type="image/x-icon">
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 	<!-- Include CSS Select2 -->
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
+	<!-- SweetAlert2 -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 	<style>
 		/* root */
@@ -30,6 +35,10 @@ if (isset($_POST['logout'])) {
 			--gradient-1: #FFB5E8;
 			--gradient-2: #B8E1FF;
 			--gradient-3: #AFF8DB;
+		}
+
+		#datatable_filter {
+			margin-bottom: 1rem;
 		}
 
 		/* navbar */
