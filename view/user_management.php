@@ -22,7 +22,7 @@ try {
 
 <div id="content">
     <div class="container mt-2">
-        <a href="add_user.php" class="btn btn-primary mb-3">Tambah Pengguna</a>
+        <a href="add_user.php" class="btn btn-primary mb-3">Tambah Data</a>
         <div class="card shadow-lg border-0 mb-4">
             <div class="card-body">
                 <?php
